@@ -328,16 +328,33 @@ body {
     left: 0;
     height: 100vh;
     background: var(--primary);
-    width: 250px;
+    width: 200px;
     transition: width 0.3s ease;
     display: flex;
     flex-direction: column;
     z-index: 1000;
+    color : var(--txt);
 }
+
+/* .sidebar .text {
+  display: inline-block;
+  opacity: 1;
+  max-width: 150px;
+  transition: opacity 0.3s ease, max-width 0.3s ease;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.sidebar .text.hide {
+  opacity: 0;
+  max-width: 0;
+} */
+
 
 /* Sidebar collapsed */
 .sidebar.collapsed {
     width: 60px;
+    transition: width 0.3s ease;
 }
 
 /* Header sidebar */
@@ -346,20 +363,29 @@ body {
     align-items: center;
     justify-content: space-between;
     padding: 10px;
-    background: #1f1a38;
+    background: var(--primary);
+
 }
 
 .logo {
-    color: #fff;
+    color : var(--txt) ;
     font-weight: bold;
+    margin: 0 8px; /* gap kiri-kanan */
+    padding: 10px 0;
 }
 
 .toggle-btn {
     background: none;
     border: none;
-    color: #fff;
+    color : var(--txt) ;
     cursor: pointer;
     font-size: 18px;
+}
+
+.sidebar.collapsed .toggle-btn {
+    margin: 0 8px;
+    padding: 12px 0;
+    transition: width 0.3s ease;
 }
 
 /* Menu */
@@ -367,25 +393,107 @@ body {
     list-style: none;
     padding: 0;
     margin: 0;
+
 }
 
 .sidebar-menu li a {
+    color : var(--txt);
     display: flex;
     align-items: center;
     padding: 10px;
     gap: 10px;
-    color: #fff;
     text-decoration: none;
     white-space: nowrap;
+    margin: 0 8px; /* gap kiri-kanan */
+    border-radius: 20px; /* corner bulat */
+    padding: 10px 15px;
+}
+
+.sidebar-menu li {
+    margin-bottom : 18px ;
+}
+
+
+.text {
+    color : var(--txt);
+    font-size : 12px;
+
+}
+
+
+.sidebar .sidebar-menu li a.active {
+    background-color: var(--sec); /* warna background aktif */
+    margin: 0 8px; /* gap kiri-kanan */
+    border-radius: 20px; /* corner bulat */
+    padding: 10px 15px; /* tetap nyaman */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color : var(--primary)!important;
+}
+.sidebar.collapsed .sidebar-menu li a.active {         /* warna utama kamu */
+  border-radius: 50%;      /* kasih efek button */
+  justify-content: center; /* tetap center */
+  width : 40px;
+  height : 40px;
+}
+
+.sidebar .sidebar-menu li a.active span.text {
+    color: var(--primary) !important;
+}
+
+.sidebar-menu li a .dashboard-icon {
+    color: #fff; /* default putih */
+}
+
+.sidebar-menu li a.active .dashboard-icon {
+    color: #710EFF; /* ungu saat active */
+}
+
+.sidebar.collapsed .sidebar-menu li a.active .dashboard-icon {
+    color: #710EFF; /* ungu saat active */
+    border-radius : 10px;
+}
+
+.sidebar-menu li a .icon svg {
+    display: block; /* pastikan image tidak ada offset */
+    width: 20px;
+    height: 20px;
 }
 
 .sidebar-menu li a:hover {
-    background: #2a2350;
+  background: var(--sec);
+  color: var(--primary);
 }
+
+.sidebar-menu li a:hover .text {
+  color: var(--primary);
+}
+
+
+.sidebar.collapsed .sidebar-menu li a:hover {
+    border-radius: 50%;      /* kasih efek button */
+    justify-content: center; /* tetap center */
+    width : 40px;
+    height : 40px;
+    
+}
+
+
+
 
 /* Hilangkan logo saat sidebar collapse */
 .sidebar.collapsed .logo {
     display: none;
+    transition: width 0.3s ease;
+}
+.sidebar.collapsed .sidebar-header {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    margin: 0 8px;
+    justify-content: center;
+    transition: width 0.3s ease;
 }
 
 /* Supaya toggle button tetap ada di posisi sama */
@@ -396,16 +504,33 @@ body {
     padding: 10px;
 }
 
-/* Sembunyikan teks saat collapse */
-.sidebar.collapsed .sidebar-menu li a span {
-    display: none;
+.sidebar.collapsed .sidebar-menu li {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    margin-bottom : 18px;
+    justify-content: center;
+    border-radius : 10px;
+    transition: width 0.3s ease;
 }
+
+
+
+/* Sembunyikan teks saat collapse */
+.sidebar.collapsed .sidebar-menu li a .text {
+    display: none;
+    transition: width 0.3s ease;
+}
+
+
+
+
 
 /* Konten */
 .main {
     flex: 1;
     padding: 20px;
-    margin-left: 250px;
+    margin-left: 200px;
     transition: margin-left 0.3s ease;
 }
 
