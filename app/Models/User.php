@@ -23,8 +23,8 @@ class User extends Authenticatable
         'password',
         'role',
         'security_question_id', // tambahkan ini
-     'security_answer', // tambahkan ini
-     'password_reset_token'
+        'security_answer', // tambahkan ini
+        'password_reset_token'
     ];
 
     

@@ -13,38 +13,41 @@ class LoginController extends Controller
         return view('auth.login');
     }
 
-   public function login(Request $request)
-{
-    $request->validate([
-        'email_or_phone' => 'required|string',
-        'password' => 'required|string',
-    ]);
+    public function login(Request $request)
+    {
+        $request->validate([
+            'email_or_phone' => 'required|string',
+            'password' => 'required|string',
+        ]);
 
-    $user = User::where('email_or_phone', $request->email_or_phone)->first();
+        $user = User::where('email_or_phone', $request->email_or_phone)->first();
 
-    if (!$user) {
-        return back()->withErrors([
-            'email_or_phone' => 'Email/nomor telepon tidak ditemukan.',
-        ])->onlyInput('email_or_phone');
+        if (!$user) {
+            return back()->withErrors([
+                'email_or_phone' => 'Email/nomor telepon tidak ditemukan.',
+            ])->onlyInput('email_or_phone');
+        }
+
+        $remember = $request->filled('remember');
+
+        if (!Auth::attempt(
+            ['email_or_phone' => $request->email_or_phone, 'password' => $request->password],
+            $remember
+        )) {
+            return back()->withErrors([
+                'password' => 'Password yang Anda masukkan salah.',
+            ])->withInput($request->only('email_or_phone'));
+        }
+
+        $request->session()->regenerate();
+
+        // 🔥 Cek role setelah login
+        if (Auth::user()->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        }
+
+        return redirect()->route('home');
     }
-
-    $remember = $request->filled('remember');
-
-    if (!Auth::attempt(
-        ['email_or_phone' => $request->email_or_phone, 'password' => $request->password],
-        $remember 
-    )) {
-        return back()->withErrors([
-            'password' => 'Password yang Anda masukkan salah.', 
-        ])->withInput($request->only('email_or_phone'));
-    }
-
-    $request->session()->regenerate();
-
-    return redirect()->intended(
-        Auth::user()->role === 'admin' ? '/admin/dashboard' : '/'
-    );
-}
 
     public function logout(Request $request)
     {

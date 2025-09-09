@@ -9,19 +9,17 @@ class Event extends Model
 {
     use HasFactory;
 
-    protected $table = 'tbl__events'; // ini penting biar cocok sama tabel aslinya
-    protected $primaryKey = 'id__event'; // primary key tabelnya
-
+    protected $table = 'tbl__events';
+    protected $primaryKey = 'id';
     protected $fillable = [
-        'wisata_id',
-        'nama_event',
-        'tanggal_event',
+        'title',
+        'description',
+        'category',
+        'location',
+        'start_date',
+        'end_date',
+        'status',
+        'foto__event'
     ];
-
-    public function wisata()
-    {
-        return $this->belongsTo(\App\Models\TourismPlace::class, 'wisata_id', 'id__tmpt');
-    }
+    // timestamps default true
 }
-
-

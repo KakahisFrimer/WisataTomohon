@@ -17,7 +17,7 @@ class TourismPlace extends Model
         'address',
         'category',
         'contact',
-        'description',
+        'status',
         'foto__tmpt',
         'longitude',
         'latitude'

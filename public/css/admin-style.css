@@ -333,7 +333,7 @@ body {
     display: flex;
     flex-direction: column;
     z-index: 1000;
-    color : var(--txt);
+    color: var(--txt);
 }
 
 /* .sidebar .text {
@@ -350,7 +350,6 @@ body {
   max-width: 0;
 } */
 
-
 /* Sidebar collapsed */
 .sidebar.collapsed {
     width: 60px;
@@ -364,11 +363,10 @@ body {
     justify-content: space-between;
     padding: 10px;
     background: var(--primary);
-
 }
 
 .logo {
-    color : var(--txt) ;
+    color: var(--txt);
     font-weight: bold;
     margin: 0 8px; /* gap kiri-kanan */
     padding: 10px 0;
@@ -377,7 +375,7 @@ body {
 .toggle-btn {
     background: none;
     border: none;
-    color : var(--txt) ;
+    color: var(--txt);
     cursor: pointer;
     font-size: 18px;
 }
@@ -393,11 +391,10 @@ body {
     list-style: none;
     padding: 0;
     margin: 0;
-
 }
 
 .sidebar-menu li a {
-    color : var(--txt);
+    color: var(--txt);
     display: flex;
     align-items: center;
     padding: 10px;
@@ -410,16 +407,13 @@ body {
 }
 
 .sidebar-menu li {
-    margin-bottom : 18px ;
+    margin-bottom: 18px;
 }
-
 
 .text {
-    color : var(--txt);
-    font-size : 12px;
-
+    color: var(--txt);
+    font-size: 12px;
 }
-
 
 .sidebar .sidebar-menu li a.active {
     background-color: var(--sec); /* warna background aktif */
@@ -429,13 +423,14 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
-    color : var(--primary)!important;
+    color: var(--primary) !important;
 }
-.sidebar.collapsed .sidebar-menu li a.active {         /* warna utama kamu */
-  border-radius: 50%;      /* kasih efek button */
-  justify-content: center; /* tetap center */
-  width : 40px;
-  height : 40px;
+.sidebar.collapsed .sidebar-menu li a.active {
+    /* warna utama kamu */
+    border-radius: 50%; /* kasih efek button */
+    justify-content: center; /* tetap center */
+    width: 40px;
+    height: 40px;
 }
 
 .sidebar .sidebar-menu li a.active span.text {
@@ -447,12 +442,12 @@ body {
 }
 
 .sidebar-menu li a.active .dashboard-icon {
-    color: #710EFF; /* ungu saat active */
+    color: #710eff; /* ungu saat active */
 }
 
 .sidebar.collapsed .sidebar-menu li a.active .dashboard-icon {
-    color: #710EFF; /* ungu saat active */
-    border-radius : 10px;
+    color: #710eff; /* ungu saat active */
+    border-radius: 10px;
 }
 
 .sidebar-menu li a .icon svg {
@@ -462,25 +457,20 @@ body {
 }
 
 .sidebar-menu li a:hover {
-  background: var(--sec);
-  color: var(--primary);
+    background: var(--sec);
+    color: var(--primary);
 }
 
 .sidebar-menu li a:hover .text {
-  color: var(--primary);
+    color: var(--primary);
 }
-
 
 .sidebar.collapsed .sidebar-menu li a:hover {
-    border-radius: 50%;      /* kasih efek button */
+    border-radius: 50%; /* kasih efek button */
     justify-content: center; /* tetap center */
-    width : 40px;
-    height : 40px;
-    
+    width: 40px;
+    height: 40px;
 }
-
-
-
 
 /* Hilangkan logo saat sidebar collapse */
 .sidebar.collapsed .logo {
@@ -508,23 +498,17 @@ body {
     display: flex;
     align-items: center;
     white-space: nowrap;
-    margin-bottom : 18px;
+    margin-bottom: 18px;
     justify-content: center;
-    border-radius : 10px;
+    border-radius: 10px;
     transition: width 0.3s ease;
 }
-
-
 
 /* Sembunyikan teks saat collapse */
 .sidebar.collapsed .sidebar-menu li a .text {
     display: none;
     transition: width 0.3s ease;
 }
-
-
-
-
 
 /* Konten */
 .main {
@@ -538,4 +522,497 @@ body {
 .admin-dashboard .sidebar.collapsed ~ .main {
     margin-left: 60px;
     transition: margin-left 0.3s ease;
+}
+
+/* ===============================
+   Data Wisata Page
+   =============================== */
+
+.wisata-page {
+    display: grid;
+    gap: 18px;
+    align-items: start;
+    grid-template-columns: 1fr;
+}
+
+.wisata-page .toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.wisata-page .filters {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.wisata-page .filter-group select {
+    appearance: none; /* hilangkan style default browser */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+/* Tambahkan icon panah custom */
+.wisata-page .filter-group {
+    position: relative;
+}
+
+.wisata-page .filter-group::after {
+    content: "▼";
+    font-size: 10px;
+    color: var(--txt);
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.wisata-page .filter-group {
+    display: flex;
+    align-items: center;
+    background: var(--primary);
+    border-radius: 8px;
+    padding: 6px 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.13);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.wisata-page .filter-group:hover {
+    border-color: var(--sec);
+    box-shadow: 0 2px 8px rgba(113, 14, 255, 0.15);
+}
+
+.wisata-page .filter-group select {
+    border: none;
+    background: transparent;
+    font-size: 13px;
+    color: var(--txt);
+    outline: none;
+    cursor: pointer;
+}
+
+.wisata-page select {
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background: var(--primary);
+    font-size: 13px;
+}
+
+.wisata-page .btn.primary {
+    background: var(--sec);
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+.wisata-page .btn.primary:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+.wisata-page .btn.primary:hover:enabled {
+    background: #5e0bcc;
+}
+
+/* Table */
+.wisata-page .table-responsive {
+    overflow-x: auto;
+}
+
+.wisata-page .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.wisata-page .data-table th,
+.wisata-page .data-table td {
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.wisata-page .data-table th {
+    background: #f9f9fc;
+    font-weight: 600;
+    color: var(--txt);
+}
+
+.wisata-page .data-table tr:hover {
+    background: #fafafa;
+}
+
+/* Status dropdown */
+.wisata-page td select {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 4px 6px;
+    font-size: 13px;
+}
+
+/* Fitur button (edit, delete) */
+.wisata-page .fitur {
+    display: flex;
+    gap: 6px;
+}
+
+.fitur .btn {
+    display: inline-flex;
+    align-items: center; /* ikon & teks rata tengah vertikal */
+    justify-content: center;
+    gap: 4px; /* jarak antara ikon dan teks */
+    line-height: 1; /* rapikan baseline */
+    vertical-align: middle;
+}
+
+/* Ratakan ikon + teks di tombol dalam kolom fitur */
+.wisata-page .fitur .btn {
+    display: inline-flex;
+    align-items: center; /* vertikal center */
+    gap: 6px; /* jarak ikon–teks */
+    line-height: 1; /* hindari offset baseline */
+}
+
+/* Pastikan ikon feather pas ukurannya & tidak turun */
+.wisata-page .fitur .btn svg,
+.wisata-page .fitur .btn i {
+    display: block;
+    width: 16px;
+    height: 16px;
+    flex: 0 0 16px;
+}
+
+.wisata-page .btn.danger {
+    background: #ff4b4b;
+}
+.wisata-page .btn.danger:hover {
+    background: #e63939;
+}
+
+/* Pagination */
+.wisata-page .pagination {
+    margin-top: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+}
+
+.wisata-page .pagination nav {
+    display: flex;
+    gap: 4px;
+}
+.wisata-page .pagination .page-link {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    background: #fff;
+    font-size: 13px;
+    text-decoration: none;
+    color: var(--txt);
+}
+.wisata-page .pagination .page-link:hover {
+    background: var(--sec);
+    color: #fff;
+}
+.wisata-page .pagination .active .page-link {
+    background: var(--sec);
+    color: #fff;
+    border-color: var(--sec);
+}
+
+/* Reset list style */
+.wisata-page .pagination ul {
+    display: flex;
+    gap: 6px;
+    list-style: none; /* hilangkan bullet hitam */
+    padding: 0;
+    margin: 0;
+    justify-content: center;
+    align-items: center;
+}
+
+.wisata-page .pagination li {
+    list-style: none;
+}
+
+.wisata-page .pagination a,
+.wisata-page .pagination span {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    background: #fff;
+    font-size: 13px;
+    text-decoration: none;
+    color: var(--txt);
+}
+
+.wisata-page .pagination a:hover {
+    background: var(--sec);
+    color: #fff;
+}
+
+.wisata-page .pagination .active span {
+    background: var(--sec);
+    color: #fff;
+    border-color: var(--sec);
+}
+
+/* Search bar minimalis untuk Data Wisata */
+.search-area {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    position: relative;
+}
+
+.search-area form {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.search-area input[type="search"] {
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    font-size: 13px;
+    width: 240px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    padding-right: 40px;
+}
+
+.search-area input[type="search"]:focus {
+    border-color: var(--sec);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(113, 14, 255, 0.2);
+}
+
+.search-area button[type="submit"] {
+    padding: 8px 14px;
+    border-radius: 10px;
+    border: none;
+    background: var(--sec);
+    color: #fff;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.search-area button[type="submit"]:hover {
+    background: #5e0bcc;
+}
+
+.search-area input[type="search"] {
+    width: 100%;
+    padding-right: 30px; /* space untuk tombol clear */
+}
+
+/* Hilangkan tombol clear bawaan di Chrome, Safari, Edge */
+.search-area input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+/* Hilangkan tombol clear bawaan di Firefox */
+.search-area input[type="search"]::-moz-search-clear {
+    display: none;
+}
+
+.search-area .clear-btn {
+    position: absolute;
+    right: 70px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: var(--muted);
+    display: none; /* default hidden */
+    padding: 0;
+}
+.search-area .clear-btn:hover {
+    color: var(--sec);
+}
+
+/* ===============================
+   Tambah Data Page
+   =============================== */
+
+.add__page {
+    /* max-width: 720px; */
+    margin: 0 auto;
+    background: var(--card-bg);
+    padding: 24px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.add__page h2 {
+    margin-top: 0;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    color: var(--txt);
+}
+
+/* Form */
+.add__page form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.add__page .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.detail-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.add__page label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--txt);
+}
+
+.add__page input,
+.add__page select,
+.add__page textarea {
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    width: 100%;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.add__page input:focus,
+.add__page select:focus,
+.add__page textarea:focus {
+    border-color: var(--sec);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(113, 14, 255, 0.2);
+}
+
+.add___page .detail-wrapper .detail-item label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--txt);
+}
+
+.add___page .detail-wrapper .detail-item input,
+.add___page .detail-wrapper .detail-item select,
+.add___page .detail-wrapper .detail-item textarea {
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    width: 100%;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.add___page .detail-wrapper .detail-item input:focus,
+.add___page .detail-wrapper .detail-item select:focus,
+.add___page .detail-wrapper .detail-item textarea:focus {
+    border-color: var(--sec);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(113, 14, 255, 0.2);
+}
+
+/* Textarea */
+.add__page textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Tombol Aksi */
+.add__page .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.add__page .submit__btn {
+    padding: 10px 16px;
+    font-size: 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    overflow: auto;
+    flex-direction: row;
+}
+
+.add__page .submit__btn .btn {
+    width: 50%;
+    height: 100%;
+    margin: 8px;
+}
+
+.add__page .btn.primary {
+    background: var(--sec);
+    color: var(--primary);
+}
+
+.add__page .btn.primary:hover {
+    background: #5e0bcc;
+}
+
+.add__page .btn.secondary {
+    background: #ec0c0cff;
+    color: var(--primary);
+    justify-content: center;
+}
+
+.add__page .btn.secondary:hover {
+    background: #c40303ff;
+}
+
+.add__modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+.add__modal-overlay .modal-box {
+    background: #fff;
+    padding: 20px 30px;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 400px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+.add__modal-overlay .modal-box h2 {
+    margin-bottom: 20px;
+    font-size: 18px;
+}
+.add__modal-overlay .modal-box .modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
 }

@@ -21,7 +21,7 @@
                 </a>
             </li>
             <li>
-                <a href="{{ Route::has('admin.user') ? route('admin.user') : '#' }}">
+                <a href="{{ Route::has('admin.user.index') ? route('admin.user.index') : '#' }}">
                     <span class="icon">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 166.34 186.36" width="12" height="12">
                         <title>user</title>
@@ -34,10 +34,10 @@
                 </a>
             </li>
             <li>
-                <a href="{{ Route::has('admin.location') ? route('admin.location') : '#' }}">
+                <a href="{{ route('admin.wisata.index') }}" class="{{ request()->routeIs('admin.wisata.index') ? 'active' : '' }}">
                     <span class="icon">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 142.54 185.76" width="12" height="12">
-                        <title>location</title>
+                        <title>Location</title>
                         <g>
                             <path d="M71.35,0c45.78-1,76.1,40.11,70.53,81.17-3.17,23.44-14,43.21-27.8,61.52-9.87,13.13-21,25.32-32,37.55-6.58,7.32-12.87,7.29-19.74.14-19.15-20-37.37-40.75-50.2-65.54C2.5,96.32-2.71,77,1.44,55.74,6.57,29.41,30.42,5.61,57,1.57,61.74.85,66.56.53,71.35,0Zm.29,166.79c17.57-16.4,38.42-42,48-65.32,5-12,8-24.24,6.12-37.39-2.75-19.37-12.18-34.41-30.15-42.33-19.71-8.68-39.57-7.36-57.38,5.37C18.13,41.53,11.42,65.88,19.8,91.49,29.67,121.67,50.56,144.29,71.64,166.81Z" fill="currentColor"/>
                             <path d="M71.76,43.32c17.08-.28,30.36,12.74,30.62,30,.24,16.5-13.35,30.82-29.47,31-16.71.23-31-13.08-31.33-29.1C41.24,56.81,53.68,43.63,71.76,43.32Zm.1,16a14.26,14.26,0,0,0-14.37,14A14.64,14.64,0,0,0,72.24,88.26c7.37.08,14.33-7.27,14.27-15.06S80,59.36,71.86,59.3Z" fill="currentColor"/>
@@ -48,7 +48,7 @@
                 </a>
             </li>
             <li>
-                <a href="{{ Route::has('admin.event') ? route('admin.event') : '#' }}">
+                <a href="{{ Route::has('admin.events.index') ? route('admin.events.index') : '#' }}">
                     <span class="icon">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 199.64 196.95" width="12" height="12">
                         <title>event</title>
@@ -63,7 +63,7 @@
                     <span class="text">Data Event</span>
                 </a>
             </li>
-            <li>
+            {{-- <li>
                 <a href="{{ Route::has('admin.settings') ? route('admin.settings') : '#' }}">
                     <span class="icon">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 195.07 196.53" width="12" height="12">
@@ -76,22 +76,53 @@
                     </span>
                     <span class="text">Pangaturan</span>
                 </a>
-            </li>
-            <li>
-                <a href="{{ Route::has('logout') ? route('logout') : '#' }}">
-                    <span class="icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 155.86 156.94" width="12" height="12">
-                        <title>logout2</title>
-                        <g>
-                            <path d="M155.84,78.58q0,26.48,0,53c0,14.75-10.22,25.3-25,25.34q-52.71.15-105.43-.1C10.3,156.71.05,146.19,0,131.18Q0,78.71,0,26.25C.06,9.6,9.73.15,26.51.14L129.94,0c15.12,0,25.84,10.53,25.89,25.61C155.88,43.27,155.84,60.92,155.84,78.58Zm-140-1.22c0,17.65,0,35.31,0,53C15.82,137.45,19.09,141,26,141q52,.1,103.93,0c6.88,0,10.18-3.26,10.2-10.12q.09-52.47,0-104.93c0-6.7-3.22-9.88-9.84-9.89q-52.71-.12-105.43,0c-6.1,0-9,3.26-9.06,9.36Q15.77,51.37,15.79,77.36Z" fill="currentColor"/>
-                            <path d="M99.83,88.94c-1.48-.07-3.07-.2-4.65-.2q-25.74,0-51.46,0c-6.18,0-9.61-2.93-9.66-8.2-.05-4.89,3.36-7.9,9.3-7.92,18.15,0,36.3,0,54.45,0h4.71c.3-.51.59-1,.89-1.55-4.68-4.37-9.47-8.64-14-13.16-4.34-4.32-4.56-8.23-1.07-11.64s8-3.33,12,.55Q113.7,60,126.75,73.42c4.06,4.17,4.24,8,.11,12.31-8.91,9.21-18.06,18.19-27.29,27.09-3.25,3.14-8.5,2.56-11.65-.76-2.87-3-2.81-7.28.34-10.76C92,97.17,95.87,93.16,99.83,88.94Z" fill="currentColor"/>
-                        </g>
-                        </svg>
-                    </span>
-                    <span class="text">Logout</span>
-                </a>
-            </li>
-        </ul>
-    </aside>
+            </li> --}}
 
-    
+            <li>
+    <a href="#" onclick="openLogoutModal(event)">
+        <span class="icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 155.86 156.94" width="12" height="12">
+                <title>logout2</title>
+                <g>
+                    <path d="M155.84,78.58q0,26.48,0,53c0,14.75-10.22,25.3-25,25.34q-52.71.15-105.43-.1C10.3,156.71.05,146.19,0,131.18Q0,78.71,0,26.25C.06,9.6,9.73.15,26.51.14L129.94,0c15.12,0,25.84,10.53,25.89,25.61C155.88,43.27,155.84,60.92,155.84,78.58Zm-140-1.22c0,17.65,0,35.31,0,53C15.82,137.45,19.09,141,26,141q52,.1,103.93,0c6.88,0,10.18-3.26,10.2-10.12q.09-52.47,0-104.93c0-6.7-3.22-9.88-9.84-9.89q-52.71-.12-105.43,0c-6.1,0-9,3.26-9.06,9.36Q15.77,51.37,15.79,77.36Z" fill="currentColor"/>
+                    <path d="M99.83,88.94c-1.48-.07-3.07-.2-4.65-.2q-25.74,0-51.46,0c-6.18,0-9.61-2.93-9.66-8.2-.05-4.89,3.36-7.9,9.3-7.92,18.15,0,36.3,0,54.45,0h4.71c.3-.51.59-1,.89-1.55-4.68-4.37-9.47-8.64-14-13.16-4.34-4.32-4.56-8.23-1.07-11.64s8-3.33,12,.55Q113.7,60,126.75,73.42c4.06,4.17,4.24,8,.11,12.31-8.91,9.21-18.06,18.19-27.29,27.09-3.25,3.14-8.5,2.56-11.65-.76-2.87-3-2.81-7.28.34-10.76C92,97.17,95.87,93.16,99.83,88.94Z" fill="currentColor"/>
+                </g>
+            </svg>
+        </span>
+        <span class="text">Logout</span>
+    </a>
+</li>
+</ul>
+</aside>
+
+<!-- Modal Logout -->
+<div id="logoutModal" class="add__modal-overlay" style="display: none;">
+    <div class="modal-box">
+        <h2>Yakin ingin logout?</h2>
+        <div class="modal-actions">
+            <form id="logoutForm" action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="btn primary">Logout</button>
+            </form>
+            <button onclick="closeLogoutModal()" class="btn secondary" style="background: #ec0c0cff;">Batal</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openLogoutModal(e) {
+        e.preventDefault();
+        document.getElementById('logoutModal').style.display = 'flex';
+    }
+
+    function closeLogoutModal() {
+        document.getElementById('logoutModal').style.display = 'none';
+    }
+</script>
+
+<style>
+
+    .add__modal-overlay .btn .secondary:hover {
+        background: #c40303ff;
+    }
+</style>

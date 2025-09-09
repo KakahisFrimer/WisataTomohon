@@ -6,6 +6,8 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\TourismPlaceController;
+use App\Http\Controllers\Admin\EventController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -38,24 +40,47 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->midd
 
 /*
 |--------------------------------------------------------------------------
-| Dashboard Admin (Hanya Admin)
+| Dashboard & Data Admin (Hanya Admin)
 |--------------------------------------------------------------------------
 */
-Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
     // Dashboard utama
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Dummy route untuk Tourism Place sementara
-    Route::get('/places', function () {
-        return 'Ini halaman dummy Tourism Place sementara';
-    })->name('places.index');
+    // Data Wisata
+    Route::get('/wisata', [TourismPlaceController::class, 'index'])->name('wisata.index');
+    Route::get('/wisata/create', [TourismPlaceController::class, 'create'])->name('wisata.create');
+    Route::post('/wisata', [TourismPlaceController::class, 'store'])->name('wisata.store');
+    Route::get('/wisata/{id}/edit', [TourismPlaceController::class, 'edit'])->name('wisata.edit');
+    Route::put('/wisata/{id}', [TourismPlaceController::class, 'update'])->name('wisata.update');
+    Route::patch('/wisata/{id}/status', [TourismPlaceController::class, 'updateStatus'])->name('wisata.updateStatus');
+    Route::delete('/wisata/{id}', [TourismPlaceController::class, 'destroy'])->name('wisata.destroy');
+    Route::get('/wisata/search', [TourismPlaceController::class, 'search'])->name('wisata.search');
 
-    // Dummy route untuk tambah event (nanti bisa diganti)
-    Route::get('/events/create', function () {
-        return 'Form tambah event sementara';
-    })->name('events.create');
+    // Data User
+    Route::prefix('user')->name('user.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('index');
+        Route::get('/create', [App\Http\Controllers\Admin\UserController::class, 'create'])->name('create');
+        Route::post('/store', [App\Http\Controllers\Admin\UserController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [App\Http\Controllers\Admin\UserController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [App\Http\Controllers\Admin\UserController::class, 'update'])->name('update');
+        Route::delete('/{id}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('destroy');
+    });
+
+    // EVENTS (plural)
+    Route::prefix('events')->name('events.')->group(function () {
+        Route::get('/', [EventController::class, 'index'])->name('index');
+        Route::get('/create', [EventController::class, 'create'])->name('create');
+        Route::post('/', [EventController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [EventController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [EventController::class, 'update'])->name('update');
+        Route::patch('/{id}/status', [EventController::class, 'updateStatus'])->name('updateStatus');
+        Route::delete('/{id}', [EventController::class, 'destroy'])->name('destroy');
+    });
+
+    // ALIAS untuk menu yang mungkin menggunakan 'admin.event'
+    Route::get('/event', [EventController::class, 'index'])->name('event');
 });
-
 
 /*
 |--------------------------------------------------------------------------

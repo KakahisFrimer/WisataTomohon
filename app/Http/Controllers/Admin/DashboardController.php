@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\TourismPlace;
+use App\Models\Event;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
@@ -29,12 +30,22 @@ class DashboardController extends Controller
         'longitude'
     )->get();
 
+    $upcomingEvents = Event::where('start_date', '>=', now()->toDateString())
+        ->orderBy('start_date', 'asc')
+        ->limit(5)
+        ->get();
+
+    $allEvents = Event::select('id','title','start_date','end_date','category')->get();
+
     // Kirim data ke view
     return view('admin.dashboard', [
-        'totalWisata' => $totalWisata,
-        'categories'  => $categories,
-        'places'      => $places
-    ]);
+    'totalWisata'     => $totalWisata,
+    'categories'      => $categories,
+    'places'          => $places,
+    'upcomingEvents'  => $upcomingEvents,
+    'allEvents'       => $allEvents,
+]);
+
 }
 
 }
