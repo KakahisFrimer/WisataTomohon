@@ -33,6 +33,7 @@
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         feather.replace();
+
     });
     
     document.addEventListener('livewire:update', function() {

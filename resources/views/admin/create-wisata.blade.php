@@ -13,10 +13,16 @@
         @csrf
 
         <label>Nama Tempat</label>
-        <input type="text" name="name" required>
+        <input type="text" name="name" value="{{ old('name') }}" required>
+        @error('name')
+            <small class="error-text">{{ $message }}</small>
+        @enderror
 
         <label>Alamat</label>
-        <textarea name="address" required></textarea>
+        <textarea name="address" required>{{ old('address') }}</textarea>
+        @error('address')
+            <small class="error-text">{{ $message }}</small>
+        @enderror       
 
         <label>Jenis Wisata</label>
         <select name="category" required>
@@ -43,17 +49,35 @@
 
         <label>Lokasi</label>
         <div id="map" style="height:300px; margin-bottom:10px;"></div>
-        <input type="text" name="latitude" id="latitude" placeholder="Latitude"  required>
-        <input type="text" name="longitude" id="longitude" placeholder="Longitude"  required>
+        <input type="text" name="latitude" id="latitude" placeholder="Latitude" value="{{ old('latitude') }}" required>
+        @error('latitude')
+            <small class="error-text">{{ $message }}</small>
+        @enderror
+        <input type="text" name="longitude" id="longitude" placeholder="Longitude" value="{{ old('longitude') }}" required>
+        @error('longitude')
+            <small class="error-text">{{ $message }}</small>
+        @enderror
 
         <label>Hari Buka</label>
-        <input type="text" name="hari__buka[]" placeholder="(contoh: Senin/Setiap Hari)">
+        <input type="text" name="hari__buka[]" value="{{ old('hari__buka.0') }}" placeholder="(contoh: Senin/Setiap Hari)" required>
+        @error('hari__buka.0')
+            <small class="error-text">{{ $message }}</small>
+        @enderror
         <label>Jam Buka</label>
-        <input type="time" name="jam__buka[]">
+        <input type="time" name="jam__buka[]" required >
+        @error('jam__buka.0')
+            <small class="error-text">{{ $message }}</small>
+        @enderror
         <label>Jam Tutup</label>
-        <input type="time" name="jam__tutup[]">
+        <input type="time" name="jam__tutup[]" required>
+        @error('jam__tutup.0')
+            <small class="error-text">{{ $message }}</small>
+        @enderror
         <label>Harga Tiket</label>
-        <input type="number" name="harga__tiket[]" placeholder="Harga Tiket">
+        <input type="number" name="harga__tiket[]" value="{{ old('harga__tiket.0') }}" placeholder="Harga Tiket" required>
+        @error('harga__tiket.0')
+            <small class="error-text">{{ $message }}</small>
+        @enderror
         <div class="submit__btn">
             <button type="submit" class="btn primary">Simpan</button>
             <button type="button" class="btn secondary" onclick="window.location='{{ route('admin.wisata.index') }}'">Batal</button></div>

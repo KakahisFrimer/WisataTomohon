@@ -27,7 +27,7 @@
             <h3>Total Objek Wisata</h3>
             <div class="big-number">{{ $totalWisata }}</div>
         </div>
-        <canvas id="categoryChart" width="400" height="200" style="padding-bottom:40px;"></canvas>
+        <canvas id="categoryChart"></canvas>
     </div>
     <div class="card map-card">
         <div class="card-header">
@@ -35,39 +35,37 @@
         </div>
         <div id="map" style="height:420px;"></div>
     </div>
-    <div class="card notif-card">
-        <div class="card-header">
-            <h3>Notifikasi Penting</h3>
-        </div>
-        <ul class="notif-list">
-            @forelse($notifications ?? [] as $n)
-                <li>
-                    <strong>{{ $n->nama__tmpt }}</strong>
-                    <span class="warn">@if(!$n->foto__tmpt) tanpa foto @endif @if(!$n->keterangan) tanpa deskripsi @endif</span>
-                </li>
-            @empty
-                <li>Tidak ada notifikasi.</li>
-            @endforelse
-        </ul>
+<div class="card latest-card">
+    <div class="card-header">
+        <h3>Destinasi Terbaru</h3>
+        <a href="{{ route('admin.wisata.index') }}" class="link">Lihat semua</a>
     </div>
-    <div class="card latest-card">
-        <div class="card-header">
-            <h3>Destinasi Terbaru</h3>
-            <a href="{{ Route::has('admin.places.index') ? route('admin.places.index') : '#' }}" class="link">Lihat semua</a>
-        </div>
-        <div class="latest-list">
-            @foreach($latestPlaces ?? [] as $place)
-                <div class="latest-item">
-                    <img src="{{ $place->foto__tmpt ? asset('storage/' . $place->foto__tmpt) : asset('images/placeholder.png') }}" alt="" />
-                    <div class="meta">
-                        <div class="title">{{ $place->nama__tmpt }}</div>
-                        <div class="sub">{{ $place->category }} • {{ $place->alamat }}</div>
+
+    <div class="latest-list">
+        @forelse($latestPlaces as $place)
+            <div class="latest-item">
+                @php
+                    $fotos = $place->foto__tmpt ? json_decode($place->foto__tmpt, true) : [];
+                    $foto = count($fotos) > 0 ? $fotos[0] : 'wisata/default-16x9.jpg';
+                @endphp
+
+                <img src="{{ asset('storage/' . $foto) }}" alt="{{ $place->name }}" />
+
+                <div class="meta">
+                    <div class="title">{{ $place->name }}</div>
+                    <div class="sub">
+                        <i data-feather="tag" class="icon-sm"></i> {{ $place->category }}
                     </div>
-                    <a href="{{ Route::has('admin.places.edit') ? route('admin.places.edit', $place->id__tmpt) : '#' }}" class="btn small">Edit</a>
                 </div>
-            @endforeach
-        </div>
+                <a href="{{ route('admin.wisata.edit', $place->id__tmpt) }}" class="btn small">Edit</a>
+            </div>
+        @empty
+            <p>Tidak ada destinasi terbaru.</p>
+        @endforelse
     </div>
+</div>
+
+
     <div class="card calendar-card">
         <div class="card-header">
             <h3>Kalender Event</h3>
@@ -86,9 +84,9 @@
             <div class="card-header">
                 <h4>Event Mendatang</h4>
             </div>
-            <ul>
+            <ul style="margin:0;">
                 @forelse($upcomingEvents ?? [] as $ev)
-                    <li>
+                    <li style="margin-top : 5px;">
                         <strong>{{ $ev->title }}</strong> • {{ \Carbon\Carbon::parse($ev->start_date)->format('d M Y') }}
                         @if($ev->category) <span class="cat">({{ $ev->category }})</span> @endif
                     </li>
@@ -101,6 +99,8 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const map = L.map('map').setView([1.327, 124.842], 13);
@@ -120,97 +120,93 @@ document.addEventListener('DOMContentLoaded', function () {
     places.forEach(p => {
         if (!p.latitude || !p.longitude) return;
         const icon = iconMap[p.category] || iconMap['default'];
-        const foto = p.foto__tmpt
-            ? @json(url('storage')) + '/' + p.foto__tmpt
-            : @json(asset('images/placeholder.png'));
         const popupContent = `
             <strong>${p.name}</strong><br>
-            ${p.alamat}<br>
-            Jenis: ${p.category}<br>
-            <img src="${foto}" style="width:120px;height:70px;object-fit:cover;margin-top:6px;" />
+            ${p.category}<br>
         `;
         L.marker([p.latitude, p.longitude], { icon }).addTo(map)
             .bindPopup(popupContent);
     });
-    const ctx = document.getElementById('categoryChart').getContext('2d');
-    const categories = @json($categories->pluck('category') ?? []);
-    const counts = @json($categories->pluck('total') ?? []);
-    const baseColors = [
-        '#710EFF',
-        '#8A33FF',
-        '#9F5BFF',
-        '#B47AFF',
-        '#C8A3FF',
-        '#E0C9FF'
-    ];
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: categories,
-            datasets: [{
-                label: 'Jumlah Objek Wisata',
-                data: counts,
-                backgroundColor: baseColors,
-                borderColor: baseColors.map(color => color.replace('FF', 'CC')),
-                borderWidth: 2,
-                borderRadius: 8,
-                hoverBackgroundColor: baseColors.map(color => color.replace('FF', 'CC'))
-            }]
+const ctx = document.getElementById('categoryChart').getContext('2d');
+const categories = @json($categories->pluck('category') ?? []);
+const counts = @json($categories->pluck('total') ?? []);
+const baseColors = [
+    'rgba(113, 14, 255, 0.7)',
+    'rgba(138, 51, 255, 0.7)',
+    'rgba(159, 91, 255, 0.7)',
+    'rgba(180, 122, 255, 0.7)',
+    'rgba(200, 163, 255, 0.7)'
+];
+
+const colors = categories.map((_, i) => baseColors[i % baseColors.length]);
+
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: categories,
+        datasets: [{
+            data: counts,
+            backgroundColor: baseColors,
+            borderColor: baseColors.map(c => c.replace('0.7', '1')),
+            borderWidth: 1.5,
+            borderRadius: 0,
+            hoverBackgroundColor: baseColors.map(c => c.replace('0.7', '0.9')),
+            barPercentage: 0.6,   // lebih ramping
+            categoryPercentage: 0.7
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                enabled: false
+            },
+            datalabels: {  // 🔹 angka di atas bar
+                anchor: 'end',
+                align: 'end',
+                offset: 4,
+                color: '#710eff',
+                font: {
+                    weight: 'bold',
+                    size: 12
+                },
+                formatter: (value) => value
+            }
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            layout: {
-                padding: {
-                    bottom: 30
+        scales: {
+            x: {
+                grid: {
+                    display: false
+                },
+                ticks: {
+                    color: '#444',
+                    font: {
+                        size: 11
+                    }
                 }
             },
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'top',
-                    labels: {
-                        font: {
-                            size: 14,
-                            weight: 'bold'
-                        },
-                        color: '#333'
-                    }
+            y: {
+                beginAtZero: true,
+                grid: {
+                    color: '#f2f2f2'
                 },
-                tooltip: {
-                    backgroundColor: '#fff',
-                    titleColor: '#000',
-                    bodyColor: '#000',
-                    borderColor: '#ccc',
-                    borderWidth: 1
-                }
-            },
-            scales: {
-                x: {
-                    ticks: {
-                        font: {
-                            size: 12
-                        }
+                ticks: {
+                    color: '#444',
+                    font: {
+                        size: 11
                     },
-                    grid: {
-                        display: false
-                    }
-                },
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        precision: 0,
-                        font: {
-                            size: 12
-                        }
-                    },
-                    grid: {
-                        color: '#eee'
-                    }
+                    stepSize: 10
                 }
             }
         }
-    });
+    },
+    plugins: [ChartDataLabels]
+});
+
     const events = @json($allEvents);
     let currentDate = new Date();
     const monthYearEl = document.getElementById("monthYear");
@@ -255,8 +251,8 @@ document.addEventListener('DOMContentLoaded', function () {
             let isPastEvent = false;
             let multiDay = false;
             events.forEach(event => {
-                const start = new Date(event.start_date);
-                const end = new Date(event.end_date);
+                const start = new Date(event.start_date + "T00:00:00");
+                const end = new Date(event.end_date + "T23:59:59");
                 if (cellDate >= start && cellDate <= end) {
                     isEvent = true;
                     if (cellDate < today) isPastEvent = true;
@@ -270,8 +266,8 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             cell.textContent = day;
             events.forEach(event => {
-                const start = new Date(event.start_date);
-                const end = new Date(event.end_date);
+                const start = new Date(event.start_date + "T00:00:00");
+                const end = new Date(event.end_date + "T23:59:59");
                 if (cellDate >= start && cellDate <= end) {
                     cell.addEventListener("mouseenter", e => {
                         tooltip.style.display = "block";
@@ -314,6 +310,9 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 <style>
+.li {
+    margin-bottom: 15px;
+}
 .main-header {
     display: flex;
     align-items: center;

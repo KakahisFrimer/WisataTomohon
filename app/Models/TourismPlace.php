@@ -29,4 +29,9 @@ class TourismPlace extends Model
     {
         return $this->hasMany(TourismPlaceDetail::class, 'wisata_id', 'id__tmpt');
     }
+
+    public function reviews()
+{
+    return $this->hasMany(Review::class, 'wisata_id', 'id__tmpt');
+}
 }

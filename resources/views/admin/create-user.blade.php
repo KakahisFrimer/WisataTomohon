@@ -9,14 +9,28 @@
 </header>
 
 <main class="content add__page">
+
+    @if ($errors->any())
+    <div class="alert-error">
+        <ul>
+           @foreach ($errors->all() as $error)
+                <li>
+                    {{ str_replace('The password field confirmation does not match.', 'Konfirmasi password tidak sesuai.', $error) }}
+                </li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
+
     <form action="{{ route('admin.user.store') }}" method="POST">
         @csrf
 
         <label>Nama</label>
-        <input type="text" name="name" required>
+        <input type="text" name="name" value="{{ old('name') }}"required>
 
         <label>Email / Phone</label>
-        <input type="text" name="email_or_phone" required>
+        <input type="text" name="email_or_phone" value="{{ old('email_or_phone') }}" required>
+
 
         <label>Password</label>
         <div style="position: relative;">
@@ -69,6 +83,27 @@
         transform: translateY(-50%);
         cursor: pointer;
         color: #1f1f1f;
+    }
+
+    .alert-error{
+    background: #fde8e8;
+    color: #dc2626;
+    border: 1px solid #fca5a5;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    }
+
+    .alert-error ul{
+        margin: 0;
+        padding-left: 18px;
+    }
+
+    .text-danger{
+    color: #dc2626;
+    font-size: 0.85rem;
+    display: block;
+    margin-top: 5px;
     }
 </style>
 

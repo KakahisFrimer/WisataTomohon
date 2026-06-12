@@ -3,6 +3,9 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Foundation\Inspiring;
+use Illuminate\Support\Facades\Artisan;
+use App\Console\Commands\OptimizeImages;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -26,3 +29,12 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();
+
+Artisan::command('inspire', function () {
+    $this->comment(Inspiring::quote());
+});
+
+// ✅ Daftarkan command custom
+Artisan::starting(function ($artisan) {
+    $artisan->resolve(OptimizeImages::class);
+});

@@ -32,20 +32,26 @@ class DashboardController extends Controller
 
     $upcomingEvents = Event::where('start_date', '>=', now()->toDateString())
         ->orderBy('start_date', 'asc')
-        ->limit(5)
+        ->limit(10)
         ->get();
 
     $allEvents = Event::select('id','title','start_date','end_date','category')->get();
 
-    // Kirim data ke view
-    return view('admin.dashboard', [
-    'totalWisata'     => $totalWisata,
-    'categories'      => $categories,
-    'places'          => $places,
-    'upcomingEvents'  => $upcomingEvents,
-    'allEvents'       => $allEvents,
-]);
+    // ✅ Ambil 3 destinasi terbaru
+    $latestPlaces = TourismPlace::orderBy('id__tmpt', 'desc')
+        ->take(5)
+        ->get();
 
+    // Kirim semua data ke view
+    return view('admin.dashboard', [
+        'totalWisata'    => $totalWisata,
+        'categories'     => $categories,
+        'places'         => $places,
+        'upcomingEvents' => $upcomingEvents,
+        'allEvents'      => $allEvents,
+        'latestPlaces'   => $latestPlaces,
+    ]);
 }
+
 
 }

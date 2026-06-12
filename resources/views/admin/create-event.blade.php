@@ -62,8 +62,7 @@
     <div class="modal-box">
         <h2>{{ session('success') }}</h2>
         <div class="modal-actions">
-            <a href="{{ route('admin.events.create') }}" class="btn primary">+ Tambah Event</a>
-            <a href="{{ route('admin.events.index') }}" class="btn secondary">Selesai</a>
+            <a href="{{ route('admin.events.index') }}" class="btn primary">Selesai</a>
         </div>
     </div>
 </div>

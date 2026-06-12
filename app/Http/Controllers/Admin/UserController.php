@@ -63,22 +63,41 @@ class UserController extends Controller
      * Simpan user baru (Admin)
      */
     public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'name'     => 'required|string|max:255',
-            'email_or_phone' => 'required|string|max:255|unique:users,email_or_phone',
-            'password' => 'required|string|min:6|confirmed',
-        ]);
+{
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'email_or_phone' => 'required|string|max:255|unique:users,email_or_phone',
+        'password' => 'required|string|min:8|confirmed',
+    ], [
+        'name.required' => 'Nama wajib diisi.',
+        'password.confirmed' => 'Konfirmasi password tidak sesuai.',
+        'email_or_phone.unique' => 'Email atau nomor telepon sudah digunakan.',
+    ]);
 
-        User::create([
-            'name'     => $validated['name'],
-            'email_or_phone' => $validated['email_or_phone'],
-            'password' => Hash::make($validated['password']),
-            'role'     => 'admin', // 🔑 otomatis Admin jika dibuat lewat admin
-        ]);
+    $value = $validated['email_or_phone'];
 
-        return redirect()->route('admin.user.store')->with('success', 'User berhasil ditambahkan.');
+    $isEmail = filter_var($value, FILTER_VALIDATE_EMAIL);
+    $isPhone = preg_match('/^[0-9]{10,15}$/', $value);
+
+    if (!$isEmail && !$isPhone) {
+        return back()
+            ->withErrors([
+                'email_or_phone' => 'Masukkan email atau nomor telepon yang valid.'
+            ])
+            ->withInput();
     }
+
+    User::create([
+        'name' => $validated['name'],
+        'email_or_phone' => $validated['email_or_phone'],
+        'password' => Hash::make($validated['password']),
+        'role' => 'admin',
+    ]);
+
+    return redirect()
+        ->route('admin.user.index')
+        ->with('success', 'User berhasil ditambahkan.');
+}
 
     /**
      * Edit user

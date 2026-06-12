@@ -97,4 +97,10 @@ public function getAvatarColorAttribute()
     return $colors[$index];
 }
 
+public function reviews()
+{
+    return $this->hasMany(\App\Models\Review::class);
+}
+
+
 }

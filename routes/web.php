@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\DestinationController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\EventsController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\TourismPlaceController;
 use App\Http\Controllers\Admin\EventController;
@@ -16,7 +18,8 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/destination', [DestinationController::class, 'index'])->name('all__des');
+Route::get('/destinations', [DestinationController::class, 'index'])->name('all__des');
+
 
 /*
 |--------------------------------------------------------------------------
@@ -95,3 +98,12 @@ Route::post('/verify-answer', [ForgotPasswordController::class, 'verifyAnswer'])
 Route::get('/reset-password/{token}', [ForgotPasswordController::class, 'showResetPasswordForm'])->name('password.reset');
 Route::post('/reset-password', [ForgotPasswordController::class, 'submitResetPasswordForm'])->name('password.update');
 Route::get('/password-success', [ForgotPasswordController::class, 'showSuccessPage'])->name('password.success');
+
+Route::get('/wisata/{slug}', [TourismPlaceController::class, 'show'])->name('wisata.show');
+Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+Route::get('/reviews/{wisata_id}', [ReviewController::class, 'index'])->name('reviews.index');
+
+Route::get('/event/{id}', [EventsController::class, 'show'])->name('event.show');
+Route::get('/events', [EventsController::class, 'index'])->name('all__events');
+Route::get('/event/{id}', [EventsController::class, 'show'])->name('event.show');
+
