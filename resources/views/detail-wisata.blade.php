@@ -8,7 +8,6 @@
         return;
     }
 
-    // Ambil foto & fallback
     try { 
         $photos = json_decode($place->foto__tmpt, true) ?: []; 
     } catch (\Throwable $e) { 
@@ -19,11 +18,11 @@
         ? array_map(fn($p) => asset('storage/' . ltrim($p, '/')), $photos) 
         : [asset('storage/wisata/default-16x9.png')];
 
-    // Ambil detail
     $detail = $place->details->first() ?? null;
     $jamBuka = $detail->jam__buka ?? null;
     $jamTutup = $detail->jam__tutup ?? null;
     $harga = $detail->harga__tiket ?? '-';
+    $hariBuka = $detail->hari__buka ?? '-';
     $status_operasi = $place->status ?? '-';
     $latitude = $place->latitude ?? null;
     $longitude = $place->longitude ?? null;
@@ -51,7 +50,6 @@
 <section class="ex__destination" 
     style="padding:0; height:100vh; display:grid;overflow:hidden;">
     
-    <!-- Mobile Toggle Buttons -->
     <div class="mobile-toggle-buttons">
         <button id="toggle-left-panel" class="mobile-toggle-btn" aria-label="Toggle left panel">
             <i data-feather="info" style="width:20px;height:20px;"></i>
@@ -82,9 +80,13 @@
                     <p class="place-price">
                         <i data-feather="tag" style="width:15px;height:15px;"></i> {{ $formattedPrice }}
                     </p>
+                    <p class="place-schedule">
+                        <i data-feather="calendar" style="width:15px;height:15px;"></i> {{ $hariBuka }}
+                    </p>
                     <p class="place-contact">
                         <i data-feather="phone" style="width:15px;height:15px;"></i> {{ $place->contact ?? '-' }}
                     </p>
+                    
                 </div>
             </div>
 
@@ -127,7 +129,7 @@
                 @endauth
             </div>
             <div class="action-buttons">
-                <a href="{{ route('reviews.index', $place->id__tmpt) }}" class="read__more">
+                <a href="{{ route('reviews.index', $place->slug) }}" class="read__more">
                     View Review
                 </a>
             </div>
@@ -188,7 +190,6 @@
         'wisata budaya'
     ];
 
-    // Tentukan tab atas berdasarkan kategori detail
     if (in_array($currentCategory, $tourismCategories)) {
 
         $topTabs = [
@@ -233,7 +234,7 @@
             <div class="nearby-list" data-current-category="{{ strtolower($place->category) }}">
                 {{-- Akomodasi --}}
                 @forelse($akomodasi as $item)
-                    <a href="{{ route('wisata.show', $item->id__tmpt) }}" class="nearby-item nearby-filter-item" data-category="akomodasi">
+                    <a href="{{ route('wisata.show', $item->slug) }}" class="nearby-item nearby-filter-item" data-category="akomodasi">
                         <img src="{{ $item->photoList->first() }}" alt="{{ $item->name }}">
                         <div class="nearby-info">
                             <h4>{{ $item->name }}</h4>
@@ -246,7 +247,7 @@
 
                 {{-- Kuliner --}}
                 @forelse($kuliner as $item)
-                    <a href="{{ route('wisata.show', $item->id__tmpt) }}" class="nearby-item nearby-filter-item" data-category="kuliner">
+                    <a href="{{ route('wisata.show', $item->slug) }}" class="nearby-item nearby-filter-item" data-category="kuliner">
                         <img src="{{ $item->photoList->first() }}" alt="{{ $item->name }}">
                         <div class="nearby-info">
                             <h4>{{ $item->name }}</h4>
@@ -264,7 +265,7 @@
 
     @foreach($tourism as $item)
 
-        <a href="{{ route('wisata.show', $item->id__tmpt) }}"
+        <a href="{{ route('wisata.show', $item->slug) }}"
            class="nearby-item nearby-filter-item tourism-item"
            data-category="tourism">
 
@@ -304,7 +305,7 @@
         $avgRating = $item->reviews()->avg('rating');
     @endphp
 
-    <a href="{{ route('wisata.show', $item->id__tmpt) }}"
+    <a href="{{ route('wisata.show', $item->slug) }}"
         class="nearby-item similar-rating-card">
 
         <div class="similar-image-wrapper">
@@ -338,6 +339,7 @@
 
 </div>
 
+
 @endif
 
 </div>
@@ -368,9 +370,11 @@
         </div>
     </div>
 </div>
+
 </section>
 
 <style>
+
 /* Photo Preview Modal Styles */
 /* Gallery Grid dengan Overlay */
 .gallery-grid {
@@ -815,6 +819,7 @@
     display: flex;
     align-items: center;
     gap: 4px;
+    padding-bottom : 4px;
 }
 
 .place-meta i {
@@ -1070,6 +1075,23 @@
 }
 
 /* Route Instruction Card */
+
+@media (max-width: 768px) {
+
+    #route-instruction-card {
+        bottom: 155px !important; 
+        width: calc(100% - 40px)!important;
+        max-width: 320px!important;
+        min-width: auto!important;
+        font-size: 13px!important;
+        padding: 10px 14px!important;
+    }
+
+    #route-distance {
+        font-size: 16px;
+    }
+
+}
 #route-instruction-card {
     position: absolute;
     bottom: 100px;
@@ -1659,5 +1681,8 @@ function filterCategory(category) {
     });
 });
 </script>
+
+
+
 
 @endsection

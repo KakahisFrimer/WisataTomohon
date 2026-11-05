@@ -9,9 +9,7 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    /**
-     * Tampilkan daftar user dengan filter & pagination
-     */
+    
     public function index(Request $request)
     {
         $query = User::query();
@@ -25,12 +23,11 @@ class UserController extends Controller
             });
         }
 
-        // 📌 Filter role
+       
         if ($request->filled('filterRole') && $request->filterRole !== 'Semua') {
             $query->where('role', $request->filterRole);
         }
 
-        // 📌 Sort
         if ($request->filled('sortBy')) {
             switch ($request->sortBy) {
             case 'name':
@@ -51,17 +48,13 @@ class UserController extends Controller
         return view('admin.data-user', compact('users'));
     }
 
-    /**
-     * Form tambah user (Admin)
-     */
+  
     public function create()
     {
         return view('admin.create-user');
     }
 
-    /**
-     * Simpan user baru (Admin)
-     */
+
     public function store(Request $request)
 {
     $validated = $request->validate([
@@ -99,18 +92,14 @@ class UserController extends Controller
         ->with('success', 'User berhasil ditambahkan.');
 }
 
-    /**
-     * Edit user
-     */
+    
     public function edit($id)
     {
         $user = User::findOrFail($id);
         return view('admin.edit-user', compact('user'));
     }
 
-    /**
-     * Update user
-     */
+    
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
@@ -130,9 +119,7 @@ class UserController extends Controller
         return redirect()->route('admin.user.edit', $user->id)->with('success', 'User berhasil diupdate.');
     }
 
-    /**
-     * Hapus user
-     */
+    
     public function destroy($id)
     {
         $user = User::findOrFail($id);

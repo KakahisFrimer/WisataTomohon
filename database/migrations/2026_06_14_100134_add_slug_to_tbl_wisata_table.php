@@ -9,19 +9,17 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
 {
     Schema::table('tbl__wisata', function (Blueprint $table) {
-        // jangan pakai unique dulu
-        $table->string('slug')->nullable()->after('name');
+        $table->string('slug')->unique()->after('name');
     });
 }
 
-public function down()
+public function down(): void
 {
     Schema::table('tbl__wisata', function (Blueprint $table) {
         $table->dropColumn('slug');
     });
 }
-
 };

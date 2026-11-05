@@ -2,10 +2,9 @@
 
 @section('content')
 
-<!-- Landing Page -->
 <section class="landing__page" id="home">
     <main class="container">
-        <h3>Welcome To</h3>
+        <h2>WELCOME TO</h2>
         <h1>TOMOHON CITY</h1>
         <p>Explore the Beuaty of Tomohon's Nature and Culture</p>
         <a href="#near__destination"><button>Start Explore</button></a>
@@ -34,11 +33,10 @@
 </div>
 
 
-<!-- Destinasi Terdekat -->
 <section id="near__destination" class="ex__destination">
     <div class="destination__title">
         <h3>Nearest Destination</h3>
-        <a href="#"><button>View All</button></a>
+        <a href="{{ route ('all__des') }}"><button>View All</button></a>
     </div>
 
     <div class="card__desti">
@@ -55,51 +53,61 @@
                 $jamBuka = $detail->jam__buka ?? null;
                 $jamTutup = $detail->jam__tutup ?? null;
 
-                $now = \Carbon\Carbon::now()->format('H:i');
-                $status = ($jamBuka && $jamTutup && $now >= $jamBuka && $now <= $jamTutup) ? 'Buka' : 'Tutup';
-
                 $harga = $detail->harga__tiket ?? '-';
+                $avgRating = $item->average_rating ?? $item->reviews()->avg('rating') ?? 0;
+                $statusBuka = $item->status_buka ?? '-';
             @endphp
 
             <div class="destination__card">
-                <a href="{{ route('wisata.show', $item->id__tmpt) }}" class="card card-link">
+                <a href="{{ route('wisata.show', $item->slug) }}" onclick="event.preventDefault(); redirectWithLocation('{{ route('wisata.show', $item->slug) }}');" class="android-card">
                     <div class="card__image-wrapper">
-                        <img src="{{ asset($photoPath) }}" class="loc__img" loading="lazy">
+                        <img src="{{ asset($photoPath) }}" class="loc__img" alt="{{ $item->name }}" loading="lazy">
 
-                        @php
-                            $avgRating = $item->reviews()->avg('rating');
-                        @endphp
-
-                        <span class="badge-rating top-left">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                <path d="M12 .587l3.668 7.431 8.2 1.193-5.934 5.782 1.401 8.173L12 18.897l-7.335 3.869 1.401-8.173L.132 9.211l8.2-1.193z"/>
+                        {{-- Floating Rating Chip (Android Material Glassmorphism) --}}
+                        <div class="badge-rating-android">
+                            <svg viewBox="0 0 24 24" class="star-icon">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                             </svg>
-                            {{ number_format($avgRating ?? 0, 2) }}
-                        </span>
+                            <span>{{ number_format($avgRating, 1) }}</span>
+                        </div>
 
-                        <span class="badge-status top-right {{ strtolower($status) }}">{{ $status }}</span>
+                        {{-- Floating Status Badge (Buka / Tutup) --}}
+                        @if($statusBuka === 'Buka')
+                            <div class="badge-status-android buka">
+                                <span class="dot-indicator"></span>Buka
+                            </div>
+                        @elseif($statusBuka === 'Tutup')
+                            <div class="badge-status-android tutup">
+                                Tutup
+                            </div>
+                        @endif
                     </div>
 
-
                     <div class="card__content">
+                        <span class="card-category-pill">{{ $item->category ?? 'Wisata' }}</span>
                         <h2 class="place-name">{{ $item->name }}</h2>
-                        <p class="place-category">{{ $item->category ?? '-' }}</p>
 
-                        <div class="info__container">
-                            <div class="info-line">
-                                <span class="distance-placeholder">
-                                    Jarak:
-                                    @if(isset($item->distance))
+                        <div class="card-meta-row">
+                            <div class="meta-distance">
+                                <svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                    <circle cx="12" cy="10" r="3"></circle>
+                                </svg>
+                                <span>
+                                    @if(isset($item->distance) && $item->distance !== null)
                                         {{ number_format($item->distance, 2, ',', '.') }} km
                                     @else
-                                        -
+                                        Tomohon
                                     @endif
                                 </span>
                             </div>
-                            <div class="info-line">
-                                <span class="price">
+                            <div class="meta-price">
+                                <span class="price-label">Tiket</span>
+                                <span class="price-value">
                                     @if(is_numeric($harga))
                                         Rp {{ number_format($harga, 0, ',', '.') }}
+                                    @elseif($harga === '-' || empty($harga))
+                                        Gratis
                                     @else
                                         {{ $harga }}
                                     @endif
@@ -107,9 +115,12 @@
                             </div>
                         </div>
 
-                        <button class="visit-btn" onclick="redirectWithLocation('{{ route('wisata.show', $item->id__tmpt) }}')">
-                            Visit
-                        </button>
+                        <div class="card-action-bar">
+                            <span>Lihat Detail</span>
+                            <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </div>
                     </div>
                 </a>
             </div>
@@ -119,67 +130,77 @@
     </div>
 </section>
 
-<!-- Populer Destinasi -->
 <section id="ex__destination" class="ex__destination">
     <div class="destination__title">
         <h3>Popular Destination</h3>
-        <a href="#"><button>View All</button></a>
+        <a href="{{ route ('all__des') }}"><button>View All</button></a>
     </div>
 
     <div class="card__desti">
         @forelse($destinations as $item)
             @php
                 $photos = json_decode($item->foto__tmpt, true) ?? [];
-                $photoPath = !empty($photos) ? 'storage/' . $photos[0] : 'storage/wisata/default-16x9.png';
+                $photoPath = !empty($photos) ? 'storage/' . $photos[0] : 'storage/wisata/default-16x9.webp';
 
                 $detail = $item->details->first();
                 $jamBuka = $detail->jam__buka ?? null;
                 $jamTutup = $detail->jam__tutup ?? null;
 
-                $now = \Carbon\Carbon::now()->format('H:i');
-                $status = ($jamBuka && $jamTutup && $now >= $jamBuka && $now <= $jamTutup) ? 'Buka' : 'Tutup';
-
                 $harga = $detail->harga__tiket ?? '-';
+                $avgRating = $item->average_rating ?? $item->reviews()->avg('rating') ?? 0;
+                $statusBuka = $item->status_buka ?? '-';
             @endphp
 
             <div class="destination__card">
-                <a href="{{ route('wisata.show', $item->id__tmpt) }}" class="card card-link">
+                <a href="{{ route('wisata.show', $item->slug) }}" onclick="event.preventDefault(); redirectWithLocation('{{ route('wisata.show', $item->slug) }}');" class="android-card">
                     <div class="card__image-wrapper">
-                        <img src="{{ asset($photoPath) }}" class="loc__img" loading="lazy">
+                        <img src="{{ asset($photoPath) }}" class="loc__img" alt="{{ $item->name }}" loading="lazy">
 
-                        @php
-                            $avgRating = $item->reviews()->avg('rating');
-                        @endphp
-
-                        <span class="badge-rating top-left">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                <path d="M12 .587l3.668 7.431 8.2 1.193-5.934 5.782 1.401 8.173L12 18.897l-7.335 3.869 1.401-8.173L.132 9.211l8.2-1.193z"/>
+                        {{-- Floating Rating Chip (Android Material Glassmorphism) --}}
+                        <div class="badge-rating-android">
+                            <svg viewBox="0 0 24 24" class="star-icon">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                             </svg>
-                            {{ number_format($avgRating ?? 0, 2) }}
-                        </span>
+                            <span>{{ number_format($avgRating, 1) }}</span>
+                        </div>
 
-                        <span class="badge-status top-right {{ strtolower($status) }}">{{ $status }}</span>
+                        {{-- Floating Status Badge (Buka / Tutup) --}}
+                        @if($statusBuka === 'Buka')
+                            <div class="badge-status-android buka">
+                                <span class="dot-indicator"></span>Buka
+                            </div>
+                        @elseif($statusBuka === 'Tutup')
+                            <div class="badge-status-android tutup">
+                                Tutup
+                            </div>
+                        @endif
                     </div>
 
                     <div class="card__content">
+                        <span class="card-category-pill">{{ $item->category ?? 'Wisata' }}</span>
                         <h2 class="place-name">{{ $item->name }}</h2>
-                        <p class="place-category">{{ $item->category ?? '-' }}</p>
 
-                        <div class="info__container">
-                            <div class="info-line">
-                                <span class="distance-placeholder">
-                                    Jarak:
-                                    @if(isset($item->distance))
+                        <div class="card-meta-row">
+                            <div class="meta-distance">
+                                <svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                    <circle cx="12" cy="10" r="3"></circle>
+                                </svg>
+                                <span>
+                                    @if(isset($item->distance) && $item->distance !== null)
                                         {{ number_format($item->distance, 2, ',', '.') }} km
                                     @else
-                                        -
+                                        Tomohon
                                     @endif
                                 </span>
                             </div>
-                            <div class="info-line">
-                                <span class="price">
+                            <div class="meta-price">
+                                <span class="price-label">Tiket</span>
+                                <span class="price-value">
                                     @if(is_numeric($harga))
                                         Rp {{ number_format($harga, 0, ',', '.') }}
+                                    @elseif($harga === '-' || empty($harga))
+                                        Gratis
                                     @else
                                         {{ $harga }}
                                     @endif
@@ -187,9 +208,12 @@
                             </div>
                         </div>
 
-                        <button class="visit-btn" onclick="redirectWithLocation('{{ route('wisata.show', $item->id__tmpt) }}')">
-                            Visit
-                        </button>
+                        <div class="card-action-bar">
+                            <span>Lihat Detail</span>
+                            <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </div>
                     </div>
                 </a>
             </div>
@@ -199,11 +223,10 @@
     </div>
 </section>
 
-<!-- Event Section -->
 <section id="event__section" class="ex__destination">
     <div class="destination__title">
         <h3>Event</h3>
-        <a href="#"><button>View All</button></a>
+        <a href="{{ route ('all__events') }}"><button>View All</button></a>
     </div>
 
     <div class="event__card__wrapper">
@@ -269,35 +292,274 @@
 
 <!-- Footer -->
 <footer class="footer">
-    <p>&copy; {{ date('Y') }} WisataTomohon. All rights reserved.</p>
+    <p>&copy; {{ date('Y') }} WisataTomohon. All rights reserved. | Developed by
+@fri_costan</p>
 </footer>
 
 <style>
-    /* Rating */
-    .badge-rating.top-left {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    padding: 2px 7px 2px 6px;
-    border-radius: 12px;
-    font-size: 0.7rem;
-    font-weight: 600;
-    background: #fff8db; /* kuning lembut */
-    color: #b7791f;
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-    line-height: 1;
-    vertical-align: middle;
+/* ========================================================
+   MODERN ANDROID MATERIAL 3 CARD STYLES
+   ======================================================== */
+
+.card__desti {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+    color: var(--txt);
+    margin-top: 1rem;
 }
 
-.badge-rating.top-left svg {
-    width: 12px;
-    height: 12px;
-    fill: #facc15; /* gold fill */
-    flex-shrink: 0;
+@media (max-width: 1024px) {
+    .card__desti {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 580px) {
+    .card__desti {
+        grid-template-columns: 1fr;
+        gap: 1.15rem;
+    }
+}
+
+/* Card Root Item */
+.destination__card {
+    display: flex;
+    flex-direction: column;
+}
+
+.android-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: #ffffff;
+    border-radius: 20px;
+    overflow: hidden;
+    text-decoration: none;
+    color: #1f1f1f;
+    border: 1px solid rgba(0, 0, 0, 0.07);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s ease;
     position: relative;
-    top: -0.5px; /* ini buat sejajar dengan angka */
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.android-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 28px rgba(113, 14, 255, 0.12);
+    border-color: rgba(113, 14, 255, 0.25);
+}
+
+.android-card:active {
+    transform: scale(0.985);
+}
+
+/* Image Wrapper */
+.card__image-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: #eef2f6;
+}
+
+.loc__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.android-card:hover .loc__img {
+    transform: scale(1.06);
+}
+
+/* Floating Rating Chip (Frosted Glass Pill) */
+.badge-rating-android {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 11px;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 30px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #1f1f1f;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+    z-index: 10;
+}
+
+.badge-rating-android .star-icon {
+    width: 13px;
+    height: 13px;
+    fill: #f59e0b;
+    color: #f59e0b;
+}
+
+/* Floating Status Chip (Buka / Tutup) */
+.badge-status-android {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 11px;
+    border-radius: 30px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+.badge-status-android.buka {
+    background: rgba(240, 253, 244, 0.95);
+    color: #15803d;
+    border: 1px solid rgba(34, 197, 94, 0.35);
+}
+
+.badge-status-android.tutup {
+    background: rgba(254, 242, 242, 0.95);
+    color: #b91c1c;
+    border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+.badge-status-android .dot-indicator {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #22c55e;
+    animation: pulse-dot 1.8s infinite;
+}
+
+@keyframes pulse-dot {
+    0% { transform: scale(0.95); opacity: 0.8; }
+    50% { transform: scale(1.3); opacity: 1; }
+    100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+/* Card Content Area */
+.card__content {
+    padding: 14px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    background: #ffffff;
+}
+
+.card-category-pill {
+    align-self: flex-start;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #710eff;
+    background: #f3e8ff;
+    padding: 3px 8px;
+    border-radius: 6px;
+    margin-bottom: 6px;
+}
+
+.place-name {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 10px 0;
+    line-height: 1.35;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Meta Info Row */
+.card-meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: 1px dashed rgba(0, 0, 0, 0.08);
+    gap: 8px;
+}
+
+.meta-distance {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #4b5563;
+}
+
+.meta-distance .meta-icon {
+    width: 14px;
+    height: 14px;
+    color: #710eff;
+    stroke: #710eff;
+}
+
+.meta-price {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.meta-price .price-label {
+    font-size: 0.68rem;
+    color: #9ca3af;
+    text-transform: uppercase;
+    font-weight: 500;
+    line-height: 1;
+}
+
+.meta-price .price-value {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #1f1f1f;
+    line-height: 1.2;
+}
+
+/* Action CTA Bar */
+.card-action-bar {
+    margin-top: 12px;
+    background: linear-gradient(135deg, #710eff, #8c32ff);
+    color: #ffffff;
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 0.83rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: background 0.2s ease, transform 0.2s ease;
+    box-shadow: 0 3px 10px rgba(113, 14, 255, 0.22);
+}
+
+.android-card:hover .card-action-bar {
+    background: linear-gradient(135deg, #5b00dc, #710eff);
+    box-shadow: 0 5px 14px rgba(113, 14, 255, 0.35);
+}
+
+.card-action-bar .action-icon {
+    width: 14px;
+    height: 14px;
+    transition: transform 0.2s ease;
+}
+
+.android-card:hover .card-action-bar .action-icon {
+    transform: translateX(3px);
 }
 
 
@@ -355,6 +617,25 @@
     color: #999;
 }
 
+/* Mobile */
+@media (max-width: 768px) {
+
+    .category__selector {
+        width: 85%;
+        max-width: 85%;
+        border-radius: 18px;
+        padding: 0.4rem 1rem;
+        height: 50px; /* tambahkan */
+        padding: 0 1rem; /* hilangkan padding atas-bawah */
+    }
+
+    .category-dropdown {
+        font-size: 0.85rem;
+        font-weight: 500;
+        height : 100%;
+    }
+}
+
 /* Dropdown icon */
 .dropdown-icon {
     position: absolute;
@@ -407,25 +688,35 @@
 .event__card__wrapper {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.5rem;
-    margin-top: 1.5rem;
+@media (max-width: 580px) {
+    .event__card__wrapper {
+        grid-template-columns: 1fr;
+        gap: 1.15rem;
+    }
 }
 
 /* Card container */
 .event__card {
     display: block;
     background: #fff;
-    border-radius: 12px;
+    border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    border: 1px solid rgba(0, 0, 0, 0.07);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s ease;
     text-decoration: none;
     color: inherit;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .event__card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    transform: translateY(-5px);
+    box-shadow: 0 12px 28px rgba(113, 14, 255, 0.12);
+    border-color: rgba(113, 14, 255, 0.25);
+}
+
+.event__card:active {
+    transform: scale(0.985);
 }
 
 /* Image section */
@@ -434,6 +725,7 @@
     width: 100%;
     aspect-ratio: 16 / 9;
     overflow: hidden;
+    background: #eef2f6;
 }
 
 .event__img__box img {
@@ -500,11 +792,162 @@
     font-weight: 500;
 }
 
+/* =========================
+   SCROLL REVEAL
+========================= */
+
+.destination__card,
+.event__card {
+    opacity: 0;
+    transform: translateY(25px);
+    transition:
+        opacity 0.6s ease,
+        transform 0.6s ease;
+}
+
+.destination__card.show,
+.event__card.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* =========================
+   IMAGE LOADING EFFECT
+========================= */
+
+.loc__img,
+.event__img__box img {
+    opacity: 0;
+    transition: opacity .5s ease;
+}
+
+.loc__img.loaded,
+.event__img__box img.loaded {
+    opacity: 1;
+}
+
+/* =========================
+   SKELETON IMAGE
+========================= */
+
+.card__image-wrapper,
+.event__img__box {
+    position: relative;
+    overflow: hidden;
+}
+
+.card__image-wrapper::before,
+.event__img__box::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background:
+    linear-gradient(
+        90deg,
+        #eeeeee 25%,
+        #f8f8f8 50%,
+        #eeeeee 75%
+    );
+
+    background-size: 200% 100%;
+
+    animation: skeleton-loading 1.3s infinite;
+    z-index: 0;
+}
+
+.card__image-wrapper img,
+.event__img__box img {
+    position: relative;
+    z-index: 1;
+}
+
+.card__image-wrapper.loaded::before,
+.event__img__box.loaded::before {
+    display: none;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* =========================
+   PERFORMANCE BOOST
+========================= */
+
+.ex__destination {
+    content-visibility: auto;
+    contain-intrinsic-size: 500px;
+}
+
 </style>
 
 {{-- ✅ Geolocation hanya reload sekali --}}
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+
+    const cards = document.querySelectorAll(
+        '.destination__card, .event__card'
+    );
+
+    const observer = new IntersectionObserver(
+        entries => {
+            entries.forEach(entry => {
+
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('show');
+                }
+
+            });
+        },
+        {
+            threshold: 0.1
+        }
+    );
+
+    cards.forEach(card => observer.observe(card));
+
+});
+
+
+/* =========================
+   IMAGE LOADING
+========================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const images = document.querySelectorAll(
+        '.loc__img, .event__img__box img'
+    );
+
+    images.forEach(img => {
+
+        function finishLoading() {
+
+            img.classList.add('loaded');
+
+            const wrapper =
+                img.closest('.card__image-wrapper')
+                ||
+                img.closest('.event__img__box');
+
+            if(wrapper){
+                wrapper.classList.add('loaded');
+            }
+        }
+
+        if (img.complete) {
+            finishLoading();
+        } else {
+            img.addEventListener('load', finishLoading);
+        }
+
+    });
 
     /* === GEOLOCATION: Simpan posisi user di URL (sekali saja) === */
     if (navigator.geolocation) {

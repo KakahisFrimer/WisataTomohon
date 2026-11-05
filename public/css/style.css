@@ -29,7 +29,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: url("../images/landing__page.jpg") no-repeat center/cover;
+    background: url("../images/landing__page.webp") no-repeat center/cover;
     min-height: 85vh;
     position: relative;
 }
@@ -38,8 +38,7 @@ body {
     content: "";
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.55);
-    backdrop-filter: blur(2px);
+    background: #720eff4a;
     z-index: 1;
 }
 
@@ -117,7 +116,9 @@ body {
     font-size: 0.85rem;
     font-weight: 500;
     padding: 8px 20px;
-    transition: background 0.3s, transform 0.2s ease;
+    transition:
+        background 0.3s,
+        transform 0.2s ease;
 }
 
 .ex__destination .destination__title button:hover {
@@ -144,7 +145,9 @@ body {
     border-radius: 16px;
     overflow: hidden;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
 }
 
 .destination__card .card:hover {
@@ -231,7 +234,9 @@ body {
     flex-direction: column;
     text-decoration: none;
     color: inherit;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 .card-link:hover {
     transform: translateY(-3px);
@@ -251,11 +256,19 @@ body {
     font-size: 0.75rem;
     font-weight: 600;
     background: #e6f9ee;
-    color: #16a34a;
+    z-index: 9999999 !important;
 }
 .badge-status.top-right.tutup {
     background: #fde8e8;
     color: #dc2626;
+    z-index: 9999999 !important;
+}
+
+span.badge-status.top-right.tutup {
+    z-index: 999999;
+}
+span.badge-status.top-right {
+    z-index: 999999;
 }
 
 .card__content {
@@ -443,9 +456,7 @@ select {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-image: url(../images/destination.png);
-    background-repeat: no-repeat;
-    background-size: cover;
+    background: url("../images/landing__page.webp") no-repeat center/cover;
     background-position: center;
     position: relative;
     padding: 20px;
@@ -463,6 +474,7 @@ select {
     backdrop-filter: blur(10px);
     color: var(--txt);
     margin: 0 auto;
+    z-index: 999999;
 }
 
 .login-page .login-box form {

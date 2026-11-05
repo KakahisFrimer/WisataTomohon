@@ -27,14 +27,14 @@
             @enderror
 
             <label>Password</label>
-<div style="position: relative;">
-    <input type="password" id="password" name="password" 
-           class="@error('password') input-error @enderror" required>
-    <span class="toggle-password" onclick="togglePassword()" 
-          style="position: absolute; right: 10px; top: 42%; transform: translateY(-50%); cursor: pointer; color :#1f1f1f;">
-        <i id="password-icon" data-feather="eye"></i>
-    </span>
-</div>
+            <div style="position: relative;">
+                <input type="password" id="password" name="password" 
+                    class="@error('password') input-error @enderror" required>
+                <span class="toggle-password" onclick="togglePassword()" 
+                    style="position: absolute; right: 10px; top: 42%; transform: translateY(-50%); cursor: pointer; color :#1f1f1f;">
+                    <i id="password-icon" data-feather="eye"></i>
+                </span>
+            </div>
             @error('password')
                 <span class="error-message">{{ $message }}</span>
             @enderror

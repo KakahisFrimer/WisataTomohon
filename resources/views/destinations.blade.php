@@ -3,7 +3,6 @@
 @section('content')
 <section class="destination-page" style="padding:2rem 7%;">
 
-    {{-- === Search & Filter === --}}
     <div class="destination-header">
         <div class="search-bar">
             <form action="{{ route('all__des') }}" method="GET" class="search-form">
@@ -32,12 +31,11 @@
         </div>
     </div>
 
-    {{-- === Daftar Destination === --}}
     <div class="container destination-list">
         @forelse($destinations as $item)
         
             <div class="item" data-category="{{ $item->category }}">
-                <a href="{{ route('wisata.show', $item->id__tmpt) }}" class="destination-card">
+                <a href="{{ route('wisata.show', $item->slug) }}" class="destination-card">
                     <div class="card-img">
                         @php
                             $photos = json_decode($item->foto__tmpt, true) ?? [];
@@ -58,16 +56,82 @@
 
     
     
- <!-- Pagination -->
         <div class="pagination">
-            {{ $destinations->links('pagination::bootstrap-5') }}
+            {{ $destinations->onEachSide(0)->links('pagination::bootstrap-5') }}
         </div>
 </section>
+
+<footer class="footer">
+    <p>&copy; {{ date('Y') }} WisataTomohon. All rights reserved. | Developed by
+@fri_costan</p>
+</footer>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         feather.replace(); // aktifkan Feather Icon
     });
+</script>
+
+<script>
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const items = document.querySelectorAll('.item');
+
+    const observer = new IntersectionObserver(
+        entries => {
+
+            entries.forEach(entry => {
+
+                if(entry.isIntersecting){
+                    entry.target.classList.add('show');
+                }
+
+            });
+
+        },
+        {
+            threshold: 0.1
+        }
+    );
+
+    items.forEach(item => observer.observe(item));
+
+});
+
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const images = document.querySelectorAll('.card-img img');
+
+    images.forEach(img => {
+
+        function finishLoading() {
+
+            img.classList.add('loaded');
+
+            const wrapper = img.closest('.card-img');
+
+            if(wrapper){
+                wrapper.classList.add('loaded');
+            }
+
+        }
+
+        if(img.complete){
+            finishLoading();
+        } else {
+            img.addEventListener('load', finishLoading);
+        }
+
+    });
+
+});
+
 </script>
 
 <style>
@@ -83,7 +147,99 @@
     --gap: 18px;
 }
 
-/* ==== Search Bar ==== */
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+
+    color: #333;
+    text-align: center;
+
+    padding: 12px 20px;
+    z-index: 9999;
+
+
+}
+
+
+.item {
+    opacity: 0;
+    transform: translateY(25px);
+    transition:
+        opacity .6s ease,
+        transform .6s ease;
+}
+
+.item.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+
+.card-img img {
+    opacity: 0;
+    transition: opacity .5s ease;
+}
+
+.card-img img.loaded {
+    opacity: 1;
+}
+
+
+
+
+.card-img {
+    position: relative;
+    overflow: hidden;
+}
+
+.card-img::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background: linear-gradient(
+        90deg,
+        #eeeeee 25%,
+        #f8f8f8 50%,
+        #eeeeee 75%
+    );
+
+    background-size: 200% 100%;
+
+    animation: skeleton-loading 1.2s infinite;
+
+    z-index: 0;
+}
+
+.card-img img {
+    position: relative;
+    z-index: 1;
+}
+
+.card-img.loaded::before {
+    display: none;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+
+
+.destination-list {
+    content-visibility: auto;
+    contain-intrinsic-size: 1000px;
+}
+
+
 .destination-header {
   display: flex;
   flex-direction: column;
@@ -125,7 +281,7 @@
   width: 100%;
 }
 
-/* Tombol di luar search bar */
+
 .search-btn {
   background-color: var(--sec);
   color: #fff;
@@ -142,7 +298,6 @@
   background-color: var(--sec);
 }
 
-/* Responsif */
 @media (max-width: 600px) {
   .search-bar {
     flex-direction: column;
@@ -157,7 +312,6 @@
 }
 
 
-/* ==== Container Layout Destination ==== */
 .container {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -169,7 +323,7 @@
 .item:nth-child(1),
 .item:nth-child(5),
 .item:nth-child(7) {
-  grid-column: span 2; /* Lebar 2 kolom */
+  grid-column: span 2; 
 }
 
 .item:nth-child(2),
@@ -190,7 +344,7 @@
 .choose-category h2 {
   color : var(--txt);
 }
-/* === Card === */
+
 .destination-card {
   display: flex;
   flex-direction: column;
@@ -210,7 +364,6 @@
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
 }
 
-/* === Gambar === */
 .card-img {
   position: relative;
   width: 100%;
@@ -229,7 +382,6 @@
   transform: scale(1.07);
 }
 
-/* === Overlay efek gradien halus === */
 .card-img::after {
   content: "";
   position: absolute;
@@ -243,7 +395,6 @@
   opacity: 0.8;
 }
 
-/* === Konten === */
 .card-content {
   padding: 15px 18px;
 }
@@ -266,7 +417,6 @@
   line-height: 1.4;
 }
 
-/* === Responsif === */
 @media (max-width: 768px) {
   .card-img {
     height: 180px;
@@ -277,7 +427,6 @@
 }
 
 
-/* === Choose Category === */
 .choose-category {
   margin-bottom: 10px;
   display: flex;
@@ -307,7 +456,6 @@
   background: var(--sec);
 }
 
-/* Pagination */
 .destination-page .pagination {
     margin-top: 8px;
     display: flex;
@@ -341,7 +489,6 @@
     border-color: var(--sec);
 }
 
-/* Reset list style */
 .destination-page .pagination ul {
     display: flex;
     gap: 6px;
@@ -465,6 +612,94 @@
     padding: 0;
   }
 }
+.destination-page .pagination {
+    margin-top: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color : var(--txt);
+    gap: 6px;
+    padding-top : 15px;
+}
 
+.destination-page .pagination nav {
+    display: flex;
+    gap: 4px;
+}
+.destination-page .pagination .page-link {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    background: #fff;
+    font-size: 13px;
+    text-decoration: none;
+    color: var(--txt);
+}
+.destination-page .pagination .page-link:hover {
+    background: var(--sec);
+    color: #fff;
+}
+.destination-page .pagination .active .page-link {
+    background: var(--sec);
+    color: #fff;
+    border-color: var(--sec);
+}
+
+.destination-page .pagination ul {
+    display: flex;
+    gap: 6px;
+    list-style: none; /* hilangkan bullet hitam */
+    padding: 0;
+    margin: 0;
+    justify-content: center;
+    align-items: center;
+    padding-top : 20px;
+}
+
+.destination-page .pagination li {
+    list-style: none;
+}
+
+.destination-page .pagination a,
+.destination-page .pagination span {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    background: #fff;
+    font-size: 13px;
+    text-decoration: none;
+    color: var(--txt);
+}
+
+.destination-page .pagination a:hover {
+    background: var(--sec);
+    color: #fff;
+}
+
+.destination-page .pagination .active span {
+    background: var(--sec);
+    color: #fff;
+    border-color: var(--sec);
+}
+
+@media (max-width: 768px) {
+
+    .destination-page .pagination nav {
+        width: 100%;
+    }
+
+    .destination-page .pagination ul {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 4px;
+        padding-top: 10px;
+    }
+
+    .destination-page .pagination a,
+    .destination-page .pagination span {
+        padding: 4px 8px;
+        font-size: 12px;
+    }
+}
 </style>
 @endsection

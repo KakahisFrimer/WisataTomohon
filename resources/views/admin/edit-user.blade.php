@@ -95,7 +95,7 @@
     bottom: 0;
     height: 100%;
     display: flex;
-    align-items: center;   /* ratakan vertical */
+    align-items: center;   
     justify-content: center;
     cursor: pointer;
     color: #1f1f1f;
@@ -103,7 +103,7 @@
 
 
     .toggle-password i {
-        width: 20px;   /* kecilkan icon */
+        width: 20px;  
         height: 20px;
 }
 </style>

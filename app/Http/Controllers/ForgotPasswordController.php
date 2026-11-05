@@ -139,7 +139,6 @@ class ForgotPasswordController extends Controller
                 ->withErrors(['password' => 'Your new password cannot be the same as your previous password']);
         }
 
-        // Update password
         $user->password = Hash::make($request->password);
         $user->password_reset_token = null;
         $user->save();

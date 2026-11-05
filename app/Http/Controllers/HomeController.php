@@ -16,32 +16,27 @@ class HomeController extends Controller
         return redirect()->route('admin.dashboard');
     }
 
-        // ✅ Ambil kategori dari dropdown (jika ada)
+ 
         $selectedCategory = $request->input('category', '');
 
-        // ✅ Ambil koordinat user (dari geolocation) dengan fallback default Tomohon
         $user_latitude = $request->input('lat', 1.3240);
         $user_longitude = $request->input('lng', 124.8380);
 
-        // ============================================================
-// 🏆 POPULAR DESTINATIONS (berdasarkan rating tertinggi)
-// ============================================================
+        
 $destinationsQuery = TourismPlace::with(['details', 'reviews'])
     ->withAvg('reviews', 'rating');
 
-// ✅ Jika user memilih kategori, filter berdasarkan kategori
 if (!empty($selectedCategory)) {
     $destinationsQuery->where('category', $selectedCategory);
 }
 
-// Lanjutkan pengambilan data
 $destinations = $destinationsQuery
     ->orderByDesc('reviews_avg_rating')
     ->limit(4)
     ->get()
     ->map(function ($place) use ($user_latitude, $user_longitude) {
         $photos = json_decode($place->foto__tmpt, true);
-        $place->first_photo = $photos[0] ?? 'wisata/default-16x9.jpg';
+        $place->first_photo = $photos[0] ?? 'wisata/default-16x9.webp';
 
         $today = strtolower(Carbon::now()->format('l'));
         $detail = $place->details->firstWhere('hari__buka', $today);
@@ -55,7 +50,6 @@ $destinations = $destinationsQuery
             $place->harga_tiket = '-';
         }
 
-        // Hitung jarak tetap sama
         if (!empty($place->latitude) && !empty($place->longitude)) {
             $earthRadius = 6371;
             $lat1 = deg2rad($user_latitude);
@@ -77,12 +71,8 @@ $destinations = $destinationsQuery
     });
 
 
-        // ============================================================
-// 📍 NEAREST DESTINATIONS (berdasarkan jarak user)
-// ============================================================
 $nearestQuery = TourismPlace::with(['details', 'reviews']);
 
-// ✅ Jika user memilih kategori, filter juga berdasarkan kategori
 if (!empty($selectedCategory)) {
     $nearestQuery->where('category', $selectedCategory);
 }
@@ -116,9 +106,6 @@ $nearestDestinations = $nearestQuery
     ->values();
 
 
-        // ============================================================
-        // 🏨 ACCOMMODATION & 🍽️ CULINARY
-        // ============================================================
         $accommodations = TourismPlace::where('category', 'accommodation')
             ->orderByDesc('id__tmpt')
             ->limit(4)
@@ -139,9 +126,7 @@ $nearestDestinations = $nearestQuery
                 return $place;
             });
 
- // ============================================================
-// 🎉 EVENTS
-// ============================================================
+
 $today = Carbon::today();
 
 $events = Event::orderByRaw("
@@ -155,7 +140,6 @@ $events = Event::orderByRaw("
     ->limit(4)
     ->get()
     ->map(function ($event) use ($today) {
-        // ✅ Cek apakah foto disimpan sebagai JSON atau string biasa
         $photosEvent = json_decode($event->foto__event, true);
         if (json_last_error() === JSON_ERROR_NONE && is_array($photosEvent)) {
             $event->first_photo = 'event/' . ($photosEvent[0] ?? 'default-16x9.jpg');
@@ -165,7 +149,6 @@ $events = Event::orderByRaw("
                 : 'event/default-16x9.jpg';
         }
 
-        // ✅ Status Event
         if ($event->end_date && $event->end_date < $today->toDateString()) {
             $event->status = 'Selesai';
         } elseif ($event->start_date > $today->toDateString()) {
@@ -179,9 +162,7 @@ $events = Event::orderByRaw("
 
 
 
-        // ============================================================
-        // 📤 KIRIM KE VIEW
-        // ============================================================
+
         return view('home', compact(
             'destinations',
             'accommodations',

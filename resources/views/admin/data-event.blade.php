@@ -29,7 +29,7 @@
     <div class="card full-width">
         <div class="card-header toolbar">
             <div class="filters">
-                <!-- Show -->
+               
                 <div class="filter-group">
                     <i data-feather="list" width="18" height="18" color="#1f1f1f"></i>
                     <form method="GET" action="{{ route('admin.events.index') }}">
@@ -45,7 +45,6 @@
                     </form>
                 </div>
 
-                <!-- Sort By -->
                 <div class="filter-group">
                     <i data-feather="sliders" width="18" height="18" color="#1f1f1f"></i>
                     <select id="sortBy" name="sortBy" onchange="this.form.submit()">
@@ -55,7 +54,6 @@
                     </select>
                 </div>
 
-                <!-- Filter -->
                 <div class="filter-group">
                     <i data-feather="filter" width="18" height="18" color="#1f1f1f"></i>
                     <form method="GET" action="{{ route('admin.events.index') }}">
@@ -70,7 +68,6 @@
                 </div>
             </div>
 
-            <!-- Tambah Data -->
             <button type="button" class="btn primary" onclick="window.location='{{ route('admin.events.create') }}'">
                 + Tambah Data
             </button>
@@ -104,7 +101,6 @@
                                 @endif
                             </td>
                             <td>
-                                {{-- Status otomatis dihitung dari tanggal --}}
                                 @php
                                     $today = \Carbon\Carbon::today();
                                     $start = \Carbon\Carbon::parse($event->start_date);
@@ -143,7 +139,6 @@
             </table>
         </div>
 
-        <!-- Pagination -->
         <div class="pagination">
             {{ $events->links('pagination::bootstrap-5') }}
         </div>

@@ -126,6 +126,30 @@
     </div>
 </div>
 
+@if(session('success'))
+<div id="popup" class="popup">
+    <div class="popup-content">
+        <h2>{{ session('success') }}</h2>
+
+        <div style="margin-top:20px">
+            <button onclick="closePopup()" class="btn">
+                Selesai
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+function closePopup(){
+    document.getElementById('popup').style.display = 'none';
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+    document.getElementById('popup').style.display = 'flex';
+});
+</script>
+@endif
+
 <style>
 .reviews-wrap {
     max-width: 1100px;

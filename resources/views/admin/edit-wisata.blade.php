@@ -38,16 +38,14 @@
         </select>
 
         <label>Foto Lama</label>
-<div id="preview" style="margin:10px 0; display:flex; gap:20px; flex-wrap:wrap;">
-    @if($wisata->foto__tmpt)
-        @foreach(json_decode($wisata->foto__tmpt, true) as $foto)
+        <div id="preview" style="margin:10px 0; display:flex; gap:20px; flex-wrap:wrap;">
+            @if($wisata->foto__tmpt)
+                @foreach(json_decode($wisata->foto__tmpt, true) as $foto)
             <div style="position:relative; display:inline-block; text-align:center;">
                 <img src="{{ asset('storage/'.$foto) }}" height="100" style="border-radius:8px; display:block; margin:auto;">
 
-                <!-- Checkbox tetap hidden -->
                 <input type="checkbox" name="hapus_foto[]" value="{{ $foto }}" id="hapus-{{ $loop->index }}" style="display:none;">
 
-                <!-- Tombol icon trash + tooltip -->
                 <label for="hapus-{{ $loop->index }}" class="trash-icon" 
                     style="cursor:pointer; display:block; margin-top:5px; font-size:12px; position:relative;">
                     <i data-feather="trash-2" style="width:15px; height:15px;"></i>
@@ -100,7 +98,6 @@
 
 </main>
 
-{{-- Leaflet JS --}}
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
@@ -132,7 +129,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     let marker;
 
-    // Klik di peta -> update input
     map.on('click', function(e) {
         if (marker) map.removeLayer(marker);
         marker = L.marker(e.latlng).addTo(map);
@@ -140,7 +136,6 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById("longitude").value = e.latlng.lng;
     });
 
-   // Ketik manual -> update marker
     function updateMarker() {
         let lat = parseFloat(document.getElementById("latitude").value);
         let lng = parseFloat(document.getElementById("longitude").value);
@@ -214,7 +209,6 @@ document.addEventListener("DOMContentLoaded", function() {
         let icon = label.querySelector("svg"); 
         let tooltip = label.querySelector(".tooltip-text");
 
-        // Update warna saat klik
         label.addEventListener("click", function() {
             setTimeout(() => {
                 if (checkbox.checked) {
@@ -225,7 +219,6 @@ document.addEventListener("DOMContentLoaded", function() {
             }, 10);
         });
 
-        // Tooltip muncul saat hover
         label.addEventListener("mouseenter", function() {
             tooltip.style.visibility = "visible";
             tooltip.style.opacity = "1";

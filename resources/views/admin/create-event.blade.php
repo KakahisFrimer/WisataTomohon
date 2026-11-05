@@ -84,7 +84,6 @@
         reader.readAsDataURL(file);
     }
 }
-// === Auto set status berdasarkan start_date ===
     document.addEventListener("DOMContentLoaded", function () {
     const startInput = document.querySelector('input[name="start_date"]');
     const endInput = document.querySelector('input[name="end_date"]');
@@ -111,7 +110,6 @@
     startInput.addEventListener("change", updateStatus);
     endInput.addEventListener("change", updateStatus);
 
-    // Trigger awal saat form dibuka
     updateStatus();
 });
 </script>

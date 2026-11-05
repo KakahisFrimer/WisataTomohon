@@ -22,3 +22,14 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Dokumentasi & AI Agent (Jangan di-upload ke GitHub)
+/docs/
+/AGENTS.md
+/.agents/
+/SKRIPSI.pdf
+/*.sql
+error_log
+public/error_log
+
+

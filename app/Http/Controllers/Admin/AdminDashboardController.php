@@ -13,7 +13,6 @@ class AdminDashboardController extends Controller
 {
     public function index()
     {
-        // Ambil semua tempat wisata yang memiliki koordinat
         $places = TourismPlace::whereNotNull('latitude')
             ->whereNotNull('longitude')
             ->get([
@@ -28,15 +27,12 @@ class AdminDashboardController extends Controller
                 'description'
             ]);
 
-        // Hitung jumlah per kategori (category)
         $categoryCounts = TourismPlace::select('category', DB::raw('count(*) as total'))
             ->groupBy('category')
             ->pluck('total', 'category');
 
-        // total wisata
         $totalWisata = TourismPlace::count();
 
-        // 5 terbaru (by id__tmpt atau created_at jika ada) — sesuaikan
         $latestPlaces = TourismPlace::orderByDesc('id__tmpt')->take(5)->get([
             'id__tmpt',
             'name',
@@ -45,14 +41,12 @@ class AdminDashboardController extends Controller
             'address'
         ]);
 
-        // events coming soon (future) — memakai 'tanggal_event'
     $upcomingEvents = Event::whereDate('tanggal_event', '>=', now()->toDateString())
         ->orderBy('tanggal_event', 'asc')
         ->take(5)
         ->get();
 
 
-        // notifications: tempat tanpa foto atau tanpa deskripsi
         $notifications = TourismPlace::where(function($q){
             $q->whereNull('foto__tmpt')->orWhere('foto__tmpt','');
         })->orWhere(function($q){

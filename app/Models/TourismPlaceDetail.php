@@ -17,6 +17,7 @@ class TourismPlaceDetail extends Model
         'jam__buka',
         'jam__tutup',
         'harga__tiket',
+        'hari__buka',
     ];
 
     public function wisata()

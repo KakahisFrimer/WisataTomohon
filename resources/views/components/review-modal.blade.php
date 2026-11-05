@@ -56,16 +56,7 @@
         </form>
     </div>
 </div>
-
-@if(session('success'))
-<div id="popup" class="popup">
-    <div class="popup-content">
-        <h2>{{ session('success') }}</h2>
-        <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center;">
-            <a href="" class="btn">Selesai</a>
-        </div>
-    </div>
-</div>
+@if(session('success')) <div id="popup" class="popup"> <div class="popup-content"> <h2>{{ session('success') }}</h2> <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center;"> <a href="" class="btn">Selesai</a> </div> </div> </div>
 
 
 <script>

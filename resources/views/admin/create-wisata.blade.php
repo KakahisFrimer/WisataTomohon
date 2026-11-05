@@ -115,7 +115,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     let marker;
 
-    // Klik di peta -> update input
+   
     map.on('click', function(e) {
         if (marker) map.removeLayer(marker);
         marker = L.marker(e.latlng).addTo(map);
@@ -134,7 +134,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    // Event listener pakai input (biar realtime saat ngetik)
+    
     document.getElementById("latitude").addEventListener("input", updateMarker);
     document.getElementById("longitude").addEventListener("input", updateMarker);
 

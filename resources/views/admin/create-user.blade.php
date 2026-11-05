@@ -69,17 +69,17 @@
 
 <style>
         .toggle-password i {
-        width: 10px;   /* kecilkan ukuran icon */
-        height: 10px;  /* kecilkan ukuran icon */
+        width: 10px;   
+        height: 10px;  
     }
 
     .toggle-password {
         display: flex;
-        align-items: center;   /* icon pas di tengah vertikal */
+        align-items: center;   
         justify-content: center;
         position: absolute;
         right: 10px;
-        top: 50%;              /* ambil posisi tengah */
+        top: 50%;              
         transform: translateY(-50%);
         cursor: pointer;
         color: #1f1f1f;

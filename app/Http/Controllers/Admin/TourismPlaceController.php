@@ -10,37 +10,36 @@ use App\Models\Review;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class TourismPlaceController extends Controller
 {
-    /**
-     * Tampilkan detail tempat wisata
-     */
-   public function show($id)
-{
-    $place = TourismPlace::with('details')->findOrFail($id);
 
-    // ✅ Foto utama destinasi saat ini
+   public function show($slug)
+{
+    $place = TourismPlace::with('details')->where('slug', $slug)
+        ->firstOrFail();
+
     $photos = json_decode($place->foto__tmpt ?? '[]', true);
     if (!is_array($photos)) {
         $photos = [];
     }
     $place->photoList = count($photos) > 0
         ? collect($photos)->map(fn($p) => asset('storage/' . ltrim($p, '/')))
-        : collect([asset('storage/wisata/default-16x9.png')]);
+        : collect([asset('storage/wisata/default-16x9.webp')]);
 
-    // ✅ Fallback jika contact & keterangan kosong
+   
     $place->contact = $place->contact ?: '-';
     $place->keterangan = $place->keterangan ?: '-';
 
-    // ✅ Ambil detail pertama (jika ada)
+   
     $detail = $place->details->first();
     $place->hariBuka = $detail->hari__buka ?? '-';
     $place->jamBuka = $detail->jam__buka ?? '-';
     $place->jamTutup = $detail->jam__tutup ?? '-';
     $place->hargaTiket = $detail->harga__tiket ?? '-';
 
-    // ✅ Ambil koordinat destinasi saat ini
+
     $lat = $place->latitude ? (float) $place->latitude : null;
     $lng = $place->longitude ? (float) $place->longitude : null;
 
@@ -52,14 +51,13 @@ class TourismPlaceController extends Controller
         'wisata buatan'
     ]);
 
-    // 🔥 Ambil review user yang sedang login (jika ada)
     $userReview = \Auth::check()
         ? \App\Models\Review::where('wisata_id', $place->id__tmpt)
                 ->where('user_id', \Auth::id())
                 ->first()
         : null;
 
-    // ✅ Helper perhitungan jarak
+
     $calculate = function ($item) use ($lat, $lng) {
         if ($lat && $lng && $item->latitude && $item->longitude) {
             $item->distance = $this->calculateDistance($lat, $lng, $item->latitude, $item->longitude);
@@ -69,7 +67,6 @@ class TourismPlaceController extends Controller
         return $item;
     };
 
-    // ✅ Helper decode foto
     $withPhotos = function ($item) {
         $photos = json_decode($item->foto__tmpt ?? '[]', true);
         if (!is_array($photos)) {
@@ -77,21 +74,19 @@ class TourismPlaceController extends Controller
         }
         $item->photoList = count($photos) > 0
             ? collect($photos)->map(fn($p) => asset('storage/' . ltrim($p, '/')))
-            : collect([asset('storage/wisata/default-16x9.png')]);
+            : collect([asset('storage/wisata/default-16x9.webp')]);
         return $item;
     };
 
-    // ✅ Ambil & hitung jarak akomodasi
     $akomodasi = TourismPlace::where('category', 'akomodasi')
         ->whereNotNull('latitude')->whereNotNull('longitude')
         ->where('id__tmpt', '!=', $place->id__tmpt)
         ->get()
         ->map($calculate)
-        ->map($withPhotos) // << foto rekomendasi
+        ->map($withPhotos) 
         ->sortBy('distance')
         ->take(3);
 
-    // ✅ Ambil & hitung jarak kuliner
     $kuliner = TourismPlace::where('category', 'kuliner')
         ->whereNotNull('latitude')->whereNotNull('longitude')
         ->where('id__tmpt', '!=', $place->id__tmpt)
@@ -101,7 +96,6 @@ class TourismPlaceController extends Controller
         ->sortBy('distance')
         ->take(3);
 
-        // ✅ Ambil semua tourism (wisata alam/buatan/budaya)
 $tourism = TourismPlace::whereIn(DB::raw('LOWER(category)'), [
         'wisata alam',
         'wisata budaya',
@@ -118,15 +112,23 @@ $tourism = TourismPlace::whereIn(DB::raw('LOWER(category)'), [
 
    // ✅ Nearby berdasarkan kategori aktif
 $nearbyQuery = TourismPlace::select(
-        'tbl__wisata.*',
-        DB::raw('COALESCE(AVG(reviews.rating),0) as average_rating')
-    )
+    'tbl__wisata.id__tmpt',
+    'tbl__wisata.slug',
+    'tbl__wisata.name',
+    'tbl__wisata.address',
+    'tbl__wisata.category',
+    'tbl__wisata.contact',
+    'tbl__wisata.status',
+    'tbl__wisata.foto__tmpt',
+    'tbl__wisata.longitude',
+    'tbl__wisata.latitude',
+    DB::raw('COALESCE(AVG(reviews.rating),0) as average_rating')
+)
     ->leftJoin('reviews', 'tbl__wisata.id__tmpt', '=', 'reviews.wisata_id')
     ->where('tbl__wisata.id__tmpt', '!=', $place->id__tmpt)
     ->whereNotNull('tbl__wisata.latitude')
     ->whereNotNull('tbl__wisata.longitude');
 
-// ✅ hanya kategori yang sama
 $nearbyQuery->whereRaw(
     'LOWER(tbl__wisata.category) = ?',
     [$currentCategory]
@@ -134,16 +136,17 @@ $nearbyQuery->whereRaw(
 
 $nearby = $nearbyQuery
     ->groupBy(
-        'tbl__wisata.id__tmpt',
-        'tbl__wisata.name',
-        'tbl__wisata.address',
-        'tbl__wisata.category',
-        'tbl__wisata.contact',
-        'tbl__wisata.status',
-        'tbl__wisata.foto__tmpt',
-        'tbl__wisata.longitude',
-        'tbl__wisata.latitude',
-    )
+    'tbl__wisata.id__tmpt',
+    'tbl__wisata.slug',
+    'tbl__wisata.name',
+    'tbl__wisata.address',
+    'tbl__wisata.category',
+    'tbl__wisata.contact',
+    'tbl__wisata.status',
+    'tbl__wisata.foto__tmpt',
+    'tbl__wisata.longitude',
+    'tbl__wisata.latitude'
+)
     ->get()
     ->map($calculate)
     ->map($withPhotos)
@@ -161,9 +164,7 @@ $nearby = $nearbyQuery
 }
 
 
-/**
- * Hitung jarak antar dua koordinat (km)
- */
+
 private function calculateDistance($lat1, $lng1, $lat2, $lng2)
 {
     $earthRadius = 6371; // km
@@ -184,14 +185,12 @@ private function calculateDistance($lat1, $lng1, $lat2, $lng2)
 
 
 
-    /**
-     * Daftar semua wisata
-     */
+    
     public function index(Request $request)
     {
         $query = TourismPlace::query();
 
-        // 🔍 Search
+        
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
                 $q->where('name', 'LIKE', "%{$request->search}%")
@@ -200,17 +199,17 @@ private function calculateDistance($lat1, $lng1, $lat2, $lng2)
             });
         }
 
-        // 📌 Filter kategori
+        
         if ($request->filled('showCategory') && $request->showCategory !== 'Semua') {
             $query->where('category', $request->showCategory);
         }
 
-        // 📌 Filter status
+        
         if ($request->has('filterStatus') && $request->filterStatus !== 'Semua') {
             $query->where('status', $request->filterStatus);
         }
 
-        // 📌 Sorting
+        
         if ($request->filled('sortBy')) {
             switch ($request->sortBy) {
                 case 'name':
@@ -229,17 +228,13 @@ private function calculateDistance($lat1, $lng1, $lat2, $lng2)
         return view('admin.data-wisata', compact('places'));
     }
 
-    /**
-     * Form tambah wisata
-     */
+  
     public function create()
     {
         return view('admin.create-wisata');
     }
 
-    /**
-     * Simpan wisata baru
-     */
+  
     public function store(Request $request)
     {
         $request->validate([
@@ -249,7 +244,7 @@ private function calculateDistance($lat1, $lng1, $lat2, $lng2)
             'contact' => 'nullable|string|max:255',
             'status' => 'required|string',
 
-            'foto__tmpt.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'foto__tmpt.*' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
 
             'latitude' => 'required',
             'longitude' => 'required',
@@ -276,7 +271,14 @@ private function calculateDistance($lat1, $lng1, $lat2, $lng2)
         ]);
 
         $wisata = new TourismPlace();
+
+        $slug = Str::slug($request->name);
+        
+        $count = TourismPlace::where('slug', 'LIKE', "{$slug}%")->count();
+        
         $wisata->name = $request->name;
+        $wisata->slug = $count ? "{$slug}-".($count + 1) : $slug;
+        
         $wisata->address = $request->address ?: '-';
         $wisata->category = $request->category;
         $wisata->contact = $request->contact ?: '-';
@@ -288,8 +290,16 @@ private function calculateDistance($lat1, $lng1, $lat2, $lng2)
         $fotoPaths = [];
         if ($request->hasFile('foto__tmpt')) {
             foreach ($request->file('foto__tmpt') as $file) {
-                $filename = time().'_'.$file->getClientOriginalName();
-                $path = $file->storeAs('wisata', $filename, 'public');
+                $filename = time().'_'.Str::random(10).'.'.$file->getClientOriginalExtension();
+                $destination = $_SERVER['DOCUMENT_ROOT'] . '/storage/wisata';
+
+                if (!file_exists($destination)) {
+                    mkdir($destination, 0755, true);
+                }
+                
+                $file->move($destination, $filename);
+                
+                $path = 'wisata/' . $filename;
                 $fotoPaths[] = $path;
             }
             $wisata->foto__tmpt = json_encode($fotoPaths);
@@ -314,12 +324,12 @@ private function calculateDistance($lat1, $lng1, $lat2, $lng2)
             }
         }
 
-        return redirect()->route('admin.wisata.create')->with('success', 'Data wisata berhasil ditambahkan');
+        return redirect()
+    ->route('admin.wisata.index')
+    ->with('success', 'Data wisata berhasil ditambahkan');
     }
 
-    /**
-     * Update status buka/tutup
-     */
+   
     public function updateStatus(Request $request, $id)
     {
         $request->validate(['status' => 'required|in:Beroperasi,Berhenti beroperasi']);
@@ -331,9 +341,7 @@ private function calculateDistance($lat1, $lng1, $lat2, $lng2)
         return back()->with('success', 'Status berhasil diperbarui!');
     }
 
-    /**
-     * Edit
-     */
+    // Edit
     public function edit($id)
     {
         $wisata = TourismPlace::with('details')->findOrFail($id);
@@ -349,7 +357,7 @@ private function calculateDistance($lat1, $lng1, $lat2, $lng2)
             'contact' => 'nullable|string|max:255',
             'status' => 'required|string',
 
-            'foto__tmpt.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'foto__tmpt.*' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
 
             'latitude' => 'required',
             'longitude' => 'required',
@@ -385,7 +393,11 @@ private function calculateDistance($lat1, $lng1, $lat2, $lng2)
             foreach ($request->hapus_foto as $hapus) {
                 if (($key = array_search($hapus, $fotoLama)) !== false) {
                     unset($fotoLama[$key]);
-                    Storage::disk('public')->delete($hapus);
+                    $filePath = public_path('storage/' . $hapus);
+
+                    if (file_exists($filePath)) {
+                        unlink($filePath);
+                    }
                 }
             }
         }
@@ -393,15 +405,31 @@ private function calculateDistance($lat1, $lng1, $lat2, $lng2)
         // Upload foto baru
         if ($request->hasFile('foto__tmpt')) {
             foreach ($request->file('foto__tmpt') as $file) {
-                $filename = time().'_'.$file->getClientOriginalName();
-                $path = $file->storeAs('wisata', $filename, 'public');
-                $fotoLama[] = $path;
+                $filename = time().'_'.Str::random(10).'.'.$file->getClientOriginalExtension();
+               $destination = $_SERVER['DOCUMENT_ROOT'] . '/storage/wisata';
+
+                if (!file_exists($destination)) {
+                    mkdir($destination, 0755, true);
+                }
+                
+                $file->move($destination, $filename);
+                
+                $fotoLama[] = 'wisata/' . $filename;
+             
             }
         }
 
         $wisata->foto__tmpt = json_encode(array_values($fotoLama));
 
+        $slug = Str::slug($request->name);
+
+        $count = TourismPlace::where('slug', 'LIKE', "{$slug}%")
+            ->where('id__tmpt', '!=', $wisata->id__tmpt)
+            ->count();
+        
         $wisata->name = $request->name;
+        $wisata->slug = $count ? "{$slug}-".($count + 1) : $slug;
+        
         $wisata->address = $request->address;
         $wisata->category = $request->category;
         $wisata->contact = $request->contact ?: '-';
@@ -430,15 +458,42 @@ private function calculateDistance($lat1, $lng1, $lat2, $lng2)
                  ->with('success', 'Data berhasil diupdate!');
     }
 
-    /**
-     * Hapus
-     */
+    
     public function destroy($id)
-    {
-        $wisata = TourismPlace::findOrFail($id);
-        $wisata->delete();
+{
+    $wisata = TourismPlace::findOrFail($id);
 
-        return redirect()->route('admin.wisata.index')
-                        ->with('success', 'Data berhasil dihapus!');
+    $photos = json_decode($wisata->foto__tmpt, true);
+
+    if ($photos) {
+        foreach ($photos as $photo) {
+
+            if ($photo === 'wisata/default-16x9.webp') {
+                continue;
+            }
+
+            $filePath = public_path('storage/' . $photo);
+
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            }
+        }
     }
+
+    TourismPlaceDetail::where(
+        'wisata_id',
+        $wisata->id__tmpt
+    )->delete();
+
+    Review::where(
+        'wisata_id',
+        $wisata->id__tmpt
+    )->delete();
+
+    $wisata->delete();
+
+    return redirect()
+        ->route('admin.wisata.index')
+        ->with('success', 'Data berhasil dihapus!');
+}
 }

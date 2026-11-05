@@ -3,7 +3,6 @@
 @section('content')
 <section class="destination-page" style="padding:2rem 7%;">
 
-    {{-- === Search & Filter === --}}
     <div class="destination-header">
         <div class="search-bar">
             <form id="searchForm" action="{{ route('all__events') }}" method="GET" class="search-form">
@@ -30,7 +29,6 @@
         </div>
     </div>
 
-    {{-- === Daftar Event === --}}
     <div class="container destination-list">
         @forelse($events as $item)
             <div class="item" data-category="{{ $item->category }}">
@@ -71,7 +69,6 @@
         @endforelse
     </div>
 
-    <!-- Pagination -->
     <div class="pagination">
         {{ $events->links('pagination::bootstrap-5') }}
     </div>

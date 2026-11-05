@@ -63,8 +63,6 @@
                 </button>
             </form>
         </div>
-    @else
-        <a href="{{ route('login') }}" style="font-size : 15px;">Login</a>
     @endauth
 </div>
 

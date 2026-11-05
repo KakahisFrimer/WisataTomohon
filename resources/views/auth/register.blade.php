@@ -5,7 +5,7 @@
 <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
 
 <style>
-    /* Style tambahan untuk security question */
+   
     .input-group select {
         width: 100%;
         padding: 12px;
@@ -101,7 +101,7 @@
                 <span class="error-message" id="email_or_phone-error"></span>
             </div>
 
-            <!-- Security Question -->
+            
             <div class="input-group">
                 <label for="security_question_id">Security Question</label>
                 <select id="security_question_id" name="security_question_id" 

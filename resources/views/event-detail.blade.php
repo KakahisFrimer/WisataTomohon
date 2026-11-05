@@ -28,11 +28,11 @@
 
 
     <div class="event-detail-content">
-            {{-- ABOUT EVENT --}}
+          
         <div class="event-section">
             <div class="event-category">{{ $event->category ?? '-' }}</div>
         </div>
-        {{-- DATE & TIME --}}
+       
         <div class="event-section">
             <h2 class="event-section-title">Event date</h2>
             <div class="event-section-item">
@@ -44,7 +44,6 @@
             </div>
         </div>
 
-        {{-- LOCATION --}}
         <div class="event-section">
             <h2 class="event-section-title">Location</h2>
             <div class="event-section-item">
@@ -76,7 +75,6 @@
         --gap: 18px;
     }
 
-    /* page layout */
     .event-detail-container {
         padding: 2rem 7%;
         background: var(--primary);

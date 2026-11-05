@@ -14,6 +14,7 @@ class TourismPlace extends Model
 
     protected $fillable = [
         'name',
+        'slug',
         'address',
         'category',
         'contact',

@@ -46,7 +46,6 @@ class RegisterController extends Controller
                 }
             ],
             'password' => 'required|string|min:6|confirmed',
-            // TAMBAHKAN VALIDASI UNTUK SECURITY QUESTION
             'security_question_id' => 'required|integer|between:1,5',
             'security_answer' => 'required|string|min:3',
         ]);
@@ -57,7 +56,6 @@ class RegisterController extends Controller
                 ->withInput();
         }
 
-        // TAMBAHKAN FIELD SECURITY QUESTION KE DALAM CREATE
         User::create([
             'name' => $request->name,
             'email_or_phone' => $request->email_or_phone,

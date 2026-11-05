@@ -8,9 +8,7 @@ use Illuminate\Support\Carbon;
 
 class EventsController extends Controller
 {
-    /**
-     * Menampilkan semua event (halaman utama events.blade.php)
-     */
+   
     public function index(Request $request)
 {
     $search = $request->input('search');
@@ -30,10 +28,8 @@ class EventsController extends Controller
         $query->where('category', $categoryFilter);
     }
 
-    // Ambil semua kategori unik dari tabel event
     $categories = Event::select('category')->distinct()->pluck('category')->filter()->values();
 
-    // Paginasi biar bisa pakai ->links()
     $events = $query->orderBy('start_date', 'desc')->paginate(9);
 
     foreach ($events as $event) {
@@ -63,20 +59,15 @@ class EventsController extends Controller
 }
 
 
-    /**
-     * Menampilkan detail event (halaman event-detail.blade.php)
-     */
     public function show($id)
     {
         $event = Event::findOrFail($id);
 
-        // Ambil foto pertama (kalau array JSON)
         $photosEvent = json_decode($event->foto__event, true);
         $event->first_photo = !empty($photosEvent[0])
             ? 'event/' . $photosEvent[0]
             : 'event/default-16x9.png';
 
-        // Tentukan status event
         $today = now()->toDateString();
         if ($event->end_date && $event->end_date < $today) {
             $event->status = 'Selesai';

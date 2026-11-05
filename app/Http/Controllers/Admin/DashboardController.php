@@ -11,15 +11,14 @@ class DashboardController extends Controller
 {
     public function index()
 {
-    // Total wisata
+   
     $totalWisata = TourismPlace::count();
 
-    // Hitung jumlah per kategori
     $categories = TourismPlace::select('category', DB::raw('COUNT(*) as total'))
         ->groupBy('category')
         ->get();
 
-    // Data untuk map
+ 
     $places = TourismPlace::select(
         'id__tmpt',
         'name',
@@ -37,12 +36,11 @@ class DashboardController extends Controller
 
     $allEvents = Event::select('id','title','start_date','end_date','category')->get();
 
-    // ✅ Ambil 3 destinasi terbaru
     $latestPlaces = TourismPlace::orderBy('id__tmpt', 'desc')
         ->take(5)
         ->get();
 
-    // Kirim semua data ke view
+    
     return view('admin.dashboard', [
         'totalWisata'    => $totalWisata,
         'categories'     => $categories,

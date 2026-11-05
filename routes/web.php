@@ -12,20 +12,12 @@ use App\Http\Controllers\Admin\TourismPlaceController;
 use App\Http\Controllers\Admin\EventController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Halaman Umum (Bisa diakses tanpa login)
-|--------------------------------------------------------------------------
-*/
+
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/destinations', [DestinationController::class, 'index'])->name('all__des');
 
 
-/*
-|--------------------------------------------------------------------------
-| Login & Register (Khusus User, Admin dibuat dari Dashboard)
-|--------------------------------------------------------------------------
-*/
+
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login']);
@@ -34,18 +26,10 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [RegisterController::class, 'register']);
 });
 
-/*
-|--------------------------------------------------------------------------
-| Logout
-|--------------------------------------------------------------------------
-*/
+
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->middleware('auth');
 
-/*
-|--------------------------------------------------------------------------
-| Dashboard & Data Admin (Hanya Admin)
-|--------------------------------------------------------------------------
-*/
+
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
     // Dashboard utama
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -85,11 +69,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/event', [EventController::class, 'index'])->name('event');
 });
 
-/*
-|--------------------------------------------------------------------------
-| Lupa Password
-|--------------------------------------------------------------------------
-*/
+
 Route::get('/forgot-password', [ForgotPasswordController::class, 'showForgetPasswordForm'])->name('password.request');
 Route::post('/forgot-password', [ForgotPasswordController::class, 'submitForgetPasswordForm'])->name('password.email');
 Route::get('/account-confirmation', [ForgotPasswordController::class, 'showAccountConfirmationForm'])->name('account.confirmation');
@@ -101,7 +81,8 @@ Route::get('/password-success', [ForgotPasswordController::class, 'showSuccessPa
 
 Route::get('/wisata/{slug}', [TourismPlaceController::class, 'show'])->name('wisata.show');
 Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
-Route::get('/reviews/{wisata_id}', [ReviewController::class, 'index'])->name('reviews.index');
+Route::get('/reviews/{slug}', [ReviewController::class, 'index'])
+    ->name('reviews.index');
 
 Route::get('/event/{id}', [EventsController::class, 'show'])->name('event.show');
 Route::get('/events', [EventsController::class, 'index'])->name('all__events');

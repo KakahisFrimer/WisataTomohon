@@ -11,7 +11,7 @@ class EventController extends Controller
 {
     public function index(Request $request)
     {
-        // Data untuk kalender (semua event dalam format JSON)
+        
         $allEvents = Event::select('id', 'title', 'category', 'start_date', 'end_date')
             ->get()
             ->map(function ($e) {
@@ -26,7 +26,7 @@ class EventController extends Controller
                 ];
             });
 
-        // Query untuk tabel data event
+        
         $query = Event::query();
 
         if ($request->filled('search')) {
@@ -55,7 +55,6 @@ class EventController extends Controller
         ->get();
 
 
-        // Kirim dua variabel ke view: $events (tabel) & $allEvents (kalender)
         return view('admin.data-event', compact('events', 'allEvents'));
     }
 
@@ -89,14 +88,28 @@ class EventController extends Controller
     }
 
     $fotoPaths = [];
+
         if ($request->hasFile('foto__event')) {
+        
             foreach ($request->file('foto__event') as $file) {
-                $fotoPaths[] = $file->store('event', 'public');
+        
+                $filename = time().'_'.\Str::random(10).'.'.$file->getClientOriginalExtension();
+        
+                $destination = $_SERVER['DOCUMENT_ROOT'] . '/storage/event';
+        
+                if (!file_exists($destination)) {
+                    mkdir($destination, 0755, true);
+                }
+        
+                $file->move($destination, $filename);
+        
+                $fotoPaths[] = 'event/' . $filename;
             }
         }
-
-        // misalnya simpan json di DB
-        $foto = !empty($fotoPaths) ? json_encode($fotoPaths) : 'event/default-16x9.jpg';
+        
+        $foto = !empty($fotoPaths)
+            ? json_encode($fotoPaths)
+            : json_encode(['event/default-16x9.webp']);
 
 
     Event::create([
@@ -147,12 +160,50 @@ class EventController extends Controller
     }
 
     $foto = $event->foto__event;
-    if ($request->hasFile('foto__event')) {
-        if ($event->foto__event && $event->foto__event !== 'event/default-16x9.jpg') {
-            Storage::delete('public/' . $event->foto__event);
-        }
-        $foto = $request->file('foto__event')->store('event', 'public');
+
+if ($request->hasFile('foto__event')) {
+
+    // Ambil foto lama
+    $fotoLama = json_decode($event->foto__event ?? '[]', true);
+
+    if (!is_array($fotoLama)) {
+        $fotoLama = [];
     }
+
+    // Hapus foto lama
+    foreach ($fotoLama as $oldPhoto) {
+
+        if ($oldPhoto === 'event/default-16x9.webp') {
+            continue;
+        }
+
+        $filePath = public_path('storage/' . $oldPhoto);
+
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        }
+    }
+
+    // Upload foto baru
+    $fotoBaru = [];
+
+    foreach ($request->file('foto__event') as $file) {
+
+        $filename = time().'_'.\Str::random(10).'.'.$file->getClientOriginalExtension();
+
+        $destination = $_SERVER['DOCUMENT_ROOT'] . '/storage/event';
+
+        if (!file_exists($destination)) {
+            mkdir($destination, 0755, true);
+        }
+
+        $file->move($destination, $filename);
+
+        $fotoBaru[] = 'event/' . $filename;
+    }
+
+    $foto = json_encode($fotoBaru);
+}
 
     $event->update([
         'title'       => $request->title,
@@ -173,9 +224,23 @@ class EventController extends Controller
     {
         $event = Event::findOrFail($id);
 
-        if ($event->foto__event && $event->foto__event !== 'event/default-16x9.jpg') {
-            Storage::delete('public/' . $event->foto__event);
+        $photos = json_decode($event->foto__event, true);
+
+if ($photos) {
+
+    foreach ($photos as $photo) {
+
+        if ($photo === 'event/default-16x9.webp') {
+            continue;
         }
+
+        $filePath = public_path('storage/' . $photo);
+
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        }
+    }
+}
 
         $event->delete();
 

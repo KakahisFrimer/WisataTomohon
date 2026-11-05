@@ -42,7 +42,6 @@
                     </form>
                 </div>
 
-                <!-- Sort By -->
                 <div class="filter-group">
                     <i data-feather="sliders" width="18" height="18" color="#1f1f1f"></i>
                     <form method="GET" action="{{ route('admin.user.index') }}">
@@ -55,7 +54,6 @@
                 </div>
             </div>
 
-            <!-- Tambah Data -->
             <button type="button" class="btn primary" onclick="window.location='{{ route('admin.user.create') }}'">
                 + Tambah Data
             </button>
@@ -101,7 +99,6 @@
             </table>
         </div>
 
-        <!-- Pagination -->
         <div class="pagination">
             {{ $users->links('pagination::bootstrap-5') }}
         </div>
@@ -117,34 +114,29 @@ document.addEventListener("DOMContentLoaded", function () {
     function applyFilters() {
         const params = new URLSearchParams(window.location.search);
 
-        // 🔍 search
         if (searchInput && searchInput.value.trim() !== "") {
             params.set("search", searchInput.value.trim());
         } else {
             params.delete("search");
         }
 
-        // 📌 sortBy
         if (sortBy && sortBy.value) {
             params.set("sortBy", sortBy.value);
         } else {
             params.delete("sortBy");
         }
 
-        // 📌 filterRole ✨ tambahan baru
         if (filterRole && filterRole.value) {
             params.set("filterRole", filterRole.value);
         } else {
             params.delete("filterRole");
         }
 
-        // Reset ke page 1 kalau ada perubahan
         params.delete("page");
 
         window.location.search = params.toString();
     }
 
-    // 🔍 Event search realtime → kasih delay biar nggak spam request
     let searchTimer;
     if (searchInput) {
         searchInput.addEventListener("keyup", function () {
@@ -177,7 +169,6 @@ document.addEventListener("DOMContentLoaded", function () {
     function closePopup() {
         document.getElementById('popup').style.display = 'none';
     }
-    // otomatis tampil saat ada session success
     document.getElementById('popup').style.display = 'flex';
 </script>
 
